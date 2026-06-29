@@ -11,15 +11,11 @@
 
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
+  {% autoescape off %}
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TravelAgency",
-    "name": "Точка на карте",
-    "description": "Авторские туры по Азии — Бали, Япония, Вьетнам. Небольшие группы, настоящие маршруты.",
-    "url": "{{ request.scheme }}://{{ request.get_host }}"
-  }
+  {"@context":"https://schema.org","@type":"TravelAgency","name":"Точка на карте","description":"Авторские туры по Азии — Бали, Япония, Вьетнам. Небольшие группы, настоящие маршруты.","url":"{{ request.scheme }}://{{ request.get_host }}"}
   </script>
+  {% endautoescape %}
 
   {# Built Tailwind CSS — 30KB vs 350KB CDN JS #}
   <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">

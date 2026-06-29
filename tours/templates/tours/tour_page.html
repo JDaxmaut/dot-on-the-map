@@ -2,26 +2,20 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_head %}
-{% if page.hero_images %}
-  {% with page.hero_images.0.value as _himg %}
-    {% image _himg fill-1200x630 format-webp as _og %}
-  {% endwith %}
-{% endif %}
+{% autoescape off %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TouristTrip",
-  "name": "{{ page.title|escapejs }}",
-  "description": "{{ page.summary|escapejs }}",
-  "url": "{{ request.build_absolute_uri|escapejs }}"{% if _og %},
-  "image": "{{ request.scheme }}://{{ request.get_host }}{{ _og.url|escapejs }}"{% endif %},
+  "name": "{{ page.title|addslashes }}",
+  "description": "{{ page.summary|addslashes }}",
+  "url": "{{ request.build_absolute_uri }}",
   "touristType": "Авторские туры",
   "offers": {
     "@type": "Offer",
-    "price": "{{ page.price_num }}",
+    "price": {{ page.price_num }},
     "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-    "url": "{{ request.build_absolute_uri|escapejs }}"
+    "availability": "https://schema.org/InStock"
   },
   "provider": {
     "@type": "TravelAgency",
@@ -30,6 +24,7 @@
   }
 }
 </script>
+{% endautoescape %}
 {% endblock %}
 
 {% block content %}
