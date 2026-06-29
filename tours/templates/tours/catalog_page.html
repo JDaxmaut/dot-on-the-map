@@ -319,7 +319,7 @@ document.addEventListener('alpine:init', () => {
     goPage(n) {
       if (n < 1 || n > this._pages) return;
       this.page = n;
-      document.getElementById('tours-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('tours-grid').scrollIntoView({ block: 'start' });
     },
 
     get totalPages() { return this._pages; },
