@@ -92,7 +92,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 YANDEX_METRIKA_ID = config("YANDEX_METRIKA_ID", default="")
-TELEGRAM_URL = config("TELEGRAM_URL", default="https://t.me/tochka_travel")
+TELEGRAM_URL = config("TELEGRAM_URL", default="https://t.me/tochka_nakarte")
 
 LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "Europe/Moscow"
