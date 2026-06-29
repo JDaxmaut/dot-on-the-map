@@ -69,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "tours.context_processors.site_settings",
             ],
         },
     }
@@ -89,6 +90,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+YANDEX_METRIKA_ID = config("YANDEX_METRIKA_ID", default="")
+TELEGRAM_URL = config("TELEGRAM_URL", default="https://t.me/tochka_travel")
 
 LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "Europe/Moscow"

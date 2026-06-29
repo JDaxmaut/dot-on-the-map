@@ -130,7 +130,7 @@
          data-title="{{ tour.title|lower }}"
          data-price="{{ tour.price_num }}"
          data-idx="{{ forloop.counter0 }}"
-         x-show="matchesTour($el)">
+         x-show="showCard($el)">
 
         <div class="overflow-hidden rounded-[20px] shadow-zen relative aspect-[4/3] bg-bamboo">
           {% if tour.hero_images %}
@@ -192,6 +192,50 @@
         Сбросить фильтры
       </button>
     </div>
+
+    {# ── PAGINATION ──────────────────────────────────────────── #}
+    <div x-show="totalPages > 1"
+         class="flex items-center justify-center gap-1 mt-[clamp(40px,6vh,64px)]"
+         style="display:none">
+
+      <button @click="goPage(page - 1)" :disabled="page <= 1"
+              :class="page <= 1
+                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
+                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
+              class="w-9 h-9 flex items-center justify-center rounded-full border
+                     bg-transparent transition-all font-sans">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+
+      <template x-for="(item, i) in pageItems" :key="i">
+        <span class="inline-flex items-center">
+          <span x-show="item === 0"
+                class="w-6 text-center text-[13px] text-muted-2 select-none">…</span>
+          <button x-show="item > 0"
+                  @click="goPage(item)"
+                  x-text="item"
+                  :class="page === item
+                    ? 'bg-terracotta text-rice border-terracotta'
+                    : 'bg-transparent text-muted border-bamboo-line hover:border-terracotta hover:text-terracotta'"
+                  class="w-9 h-9 rounded-full border text-[13px] font-sans
+                         transition-all cursor-pointer">
+          </button>
+        </span>
+      </template>
+
+      <button @click="goPage(page + 1)" :disabled="page >= totalPages"
+              :class="page >= totalPages
+                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
+                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
+              class="w-9 h-9 flex items-center justify-center rounded-full border
+                     bg-transparent transition-all font-sans">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+
+    </div>
+
   </div>
 </section>
 
@@ -207,6 +251,11 @@ document.addEventListener('alpine:init', () => {
     sort: 'default',
     stuck: false,
     showFilters: false,
+    page: 1,
+    perPage: 9,
+    _pages: 1,
+    _empty: false,
+    _vis: {},
 
     get activeFilterLabel() {
       const labels = { {% for tag in filter_tags %}'{{ tag.id }}': '{{ tag.label }}',{% endfor %} };
@@ -214,7 +263,38 @@ document.addEventListener('alpine:init', () => {
     },
 
     init() {
-      this.$watch('sort', () => this.doSort());
+      this.$watch('search', () => { this.page = 1; this._update(); });
+      this.$watch('filter', () => { this.page = 1; this._update(); });
+      this.$watch('sort',   () => { this.doSort(); });
+      this.$watch('page',   () => { this._update(); });
+      this._update();
+    },
+
+    _cards() {
+      return [...document.querySelectorAll('#tours-grid a[data-country]')];
+    },
+
+    _matches(el) {
+      const q = this.search.trim().toLowerCase();
+      const country = el.dataset.country || '';
+      const title   = el.dataset.title   || '';
+      return (this.filter === 'all' || country === this.filter) &&
+             (!q || title.includes(q) || country.includes(q));
+    },
+
+    _update() {
+      const cards    = this._cards();
+      const matching = cards.filter(el => this._matches(el));
+      this._pages = Math.max(1, Math.ceil(matching.length / this.perPage));
+      this._empty = matching.length === 0;
+      const start = (this.page - 1) * this.perPage;
+      const vis = {};
+      matching.slice(start, start + this.perPage).forEach(el => { vis[el.dataset.idx] = true; });
+      this._vis = vis;
+    },
+
+    showCard(el) {
+      return !!this._vis[el.dataset.idx];
     },
 
     setSort(val) {
@@ -233,22 +313,41 @@ document.addEventListener('alpine:init', () => {
         items.sort((a, b) => +a.dataset.idx - +b.dataset.idx);
       }
       items.forEach(el => grid.appendChild(el));
+      this._update();
     },
 
-    matchesTour(el) {
-      const country = el.dataset.country || '';
-      const title   = el.dataset.title   || '';
-      const q       = this.search.trim().toLowerCase();
-      const tagOk   = this.filter === 'all' || country === this.filter;
-      const searchOk = !q || title.includes(q) || country.includes(q);
-      return tagOk && searchOk;
+    goPage(n) {
+      if (n < 1 || n > this._pages) return;
+      this.page = n;
+      const grid = document.getElementById('tours-grid');
+      if (grid) window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 140, behavior: 'smooth' });
     },
+
+    get totalPages() { return this._pages; },
 
     get noResults() {
-      // reference reactive props so Alpine re-evaluates on change
-      void this.search; void this.filter;
-      const cards = [...document.querySelectorAll('#tours-grid a[data-country]')];
-      return cards.length > 0 && cards.every(el => el.style.display === 'none');
+      void this._vis;
+      return this._empty;
+    },
+
+    get pageItems() {
+      const total = this._pages;
+      if (total <= 1) return [];
+      const cur = this.page;
+      let nums;
+      if (total <= 7) {
+        nums = Array.from({ length: total }, (_, i) => i + 1);
+      } else {
+        const set = new Set([1, total]);
+        for (let i = Math.max(1, cur - 2); i <= Math.min(total, cur + 2); i++) set.add(i);
+        nums = [...set].sort((a, b) => a - b);
+      }
+      const result = [];
+      for (let i = 0; i < nums.length; i++) {
+        if (i > 0 && nums[i] > nums[i - 1] + 1) result.push(0);
+        result.push(nums[i]);
+      }
+      return result;
     },
   }));
 });
