@@ -1,0 +1,159 @@
+{% load wagtailcore_tags %}
+<footer class="bg-moss text-rice pt-[clamp(72px,11vh,120px)] pb-11 px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1240px] mx-auto">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-[clamp(32px,7vw,80px)] items-end
+                pb-[clamp(40px,6vw,64px)] border-b border-rice/[0.16]">
+      <h2 class="m-0 font-serif font-medium text-[clamp(28px,4vw,50px)] leading-[1.12] text-balance">
+        Готовы почувствовать настоящую Азию?
+      </h2>
+      <div x-data="newsletter()">
+        <p class="m-0 mb-5 text-[14.5px] leading-relaxed opacity-75 max-w-[38ch]">
+          Письма о путешествиях по Азии — раз в месяц, без шума и навязчивых рассылок.
+        </p>
+
+        <div x-show="!done" class="max-w-[400px]">
+          <form @submit.prevent="submit" novalidate>
+            {# Email + кнопка #}
+            <div class="flex items-center gap-3 border-b border-rice/40 pb-3">
+              <input type="email" x-model="email" required placeholder="Ваш e-mail"
+                     class="flex-1 min-w-0 bg-transparent border-0 outline-none text-rice font-sans
+                            text-[15px] font-light placeholder:text-rice/50">
+              <button type="submit"
+                      class="flex-shrink-0 bg-terracotta text-rice border-0 rounded-full
+                             px-5 py-2.5 text-[11.5px] tracking-[0.14em] uppercase cursor-pointer
+                             hover:bg-terracotta-dark transition-colors font-sans whitespace-nowrap">
+                Подписаться
+              </button>
+            </div>
+
+            {# Мат-капча #}
+            <div class="mt-4 flex items-center gap-3">
+              <span class="text-[13px] text-rice/70 whitespace-nowrap"
+                    x-text="`Сколько будет ${num1} + ${num2}?`"></span>
+              <input type="text" inputmode="numeric" pattern="[0-9]*"
+                     x-model="captchaInput"
+                     class="w-14 min-w-0 bg-transparent border-b border-rice/40 outline-none
+                            text-rice font-sans text-[14px] font-light text-center pb-1">
+              <span x-show="captchaError" class="text-[12px] text-[#f4a68c]"
+                    style="display:none">Неверно</span>
+            </div>
+
+            {# Согласие на обработку ПД #}
+            <div class="mt-3.5">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <span class="relative w-4 h-4 flex-shrink-0 mt-[1px]">
+                  <input type="checkbox" x-model="consent"
+                         class="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer m-0 z-10">
+                  <span class="absolute inset-0 rounded-[3px] border border-rice/30 bg-transparent
+                               pointer-events-none transition-all duration-150
+                               peer-checked:bg-terracotta peer-checked:border-terracotta"></span>
+                  <svg class="absolute inset-0 w-full h-full p-[3px] text-rice pointer-events-none
+                              opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                       viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M2 7.5l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="text-[12px] font-light text-rice/60 leading-relaxed">
+                  Согласен(а) с
+                  <a href="{{ privacy_url|default:'/privacy/' }}" target="_blank"
+                     class="text-rice/80 hover:text-rice transition-colors">политикой обработки данных</a>
+                </span>
+              </label>
+              <span x-show="consentError" class="mt-1 ml-[26px] text-[11px] text-[#f4a68c] block"
+                    style="display:none">Необходимо дать согласие</span>
+            </div>
+          </form>
+        </div>
+
+        {# Успех #}
+        <div x-show="done" class="flex items-center gap-3 text-rice/80 text-[14.5px]" style="display:none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M5 12.5l4.5 4.5L19 7"/>
+          </svg>
+          Готово — ждите писем!
+        </div>
+
+        <script>
+          document.addEventListener('alpine:init', () => {
+            Alpine.data('newsletter', () => ({
+              email: '',
+              done: false,
+              num1: Math.floor(Math.random() * 9) + 1,
+              num2: Math.floor(Math.random() * 9) + 1,
+              captchaInput: '',
+              captchaError: false,
+              consent: false,
+              consentError: false,
+              submit() {
+                this.captchaError = false;
+                this.consentError = false;
+                let valid = true;
+                if (Number(this.captchaInput) !== this.num1 + this.num2) {
+                  this.captchaError = true;
+                  valid = false;
+                }
+                if (!this.consent) {
+                  this.consentError = true;
+                  valid = false;
+                }
+                if (valid) this.done = true;
+              },
+            }));
+          });
+        </script>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-10 pt-[clamp(40px,6vw,64px)]">
+      <div class="col-span-2 sm:col-span-1">
+        <div class="font-serif font-medium text-[22px] tracking-[0.16em]">Точка на карте</div>
+        <p class="mt-4 text-[13.5px] leading-relaxed opacity-[0.66] max-w-[30ch]">
+          Авторские маршруты по Азии. С уважением к местам и людям.
+        </p>
+      </div>
+      <div>
+        <div class="text-[11.5px] tracking-[0.2em] uppercase opacity-50 mb-4">Разделы</div>
+        <div class="flex flex-col gap-3 text-[14px] font-light">
+          <a href="/" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Главная</a>
+          <a href="{% slugurl 'catalog' %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Туры</a>
+          {% slugurl 'about' as about_url %}
+          <a href="{{ about_url|default:'/about/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">О нас</a>
+          <a href="{% slugurl 'contact' %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Контакты</a>
+        </div>
+      </div>
+      <div>
+        <div class="text-[11.5px] tracking-[0.2em] uppercase opacity-50 mb-4">Документы</div>
+        <div class="flex flex-col gap-3 text-[14px] font-light">
+          {% slugurl 'offer' as offer_url %}
+          <a href="{{ offer_url|default:'/offer/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Публичная оферта</a>
+          {% slugurl 'privacy' as privacy_url %}
+          <a href="{{ privacy_url|default:'/privacy/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Конфиденциальность</a>
+          {% slugurl 'personal-data' as pd_url %}
+          <a href="{{ pd_url|default:'/personal-data/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Персональные данные</a>
+          {% slugurl 'payment-rules' as pay_url %}
+          <a href="{{ pay_url|default:'/payment-rules/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Оплата и возврат</a>
+        </div>
+      </div>
+      <div>
+        <div class="text-[11.5px] tracking-[0.2em] uppercase opacity-50 mb-4">Связь</div>
+        <div class="flex flex-col gap-3 text-[14px] font-light">
+          <a href="mailto:hello@tochka.travel"
+             class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">
+            hello@tochka.travel
+          </a>
+          <a href="https://t.me/tochka_travel"
+             class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Telegram</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-[clamp(36px,5vw,56px)] flex justify-between gap-5 flex-wrap
+                text-[12px] tracking-[0.04em] opacity-50">
+      <span>© {% now "Y" %} Точка на карте. Сделано с уважением к местам и людям.</span>
+      <span>Бали · Япония · Вьетнам</span>
+    </div>
+  </div>
+</footer>

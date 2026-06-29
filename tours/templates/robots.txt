@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /django-admin/
+Disallow: /documents/
+Disallow: /search/
+
+Sitemap: https://tochka.travel/sitemap.xml

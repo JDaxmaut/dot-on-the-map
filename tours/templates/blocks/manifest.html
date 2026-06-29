@@ -1,0 +1,35 @@
+{% load wagtailcore_tags %}
+<section id="manifest" class="py-[clamp(96px,15vh,180px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1240px] mx-auto grid grid-cols-1 md:grid-cols-[0.85fr_1.15fr]
+              gap-[clamp(36px,7vw,110px)] items-start">
+    <div class="relative">
+      <div class="font-serif font-medium leading-[0.78] text-moss/10 tracking-[-0.02em] select-none
+                  text-[clamp(96px,17vw,250px)]">
+        {{ value.numeral }}
+      </div>
+      <div class="absolute left-1.5 bottom-3.5 text-[12px] tracking-[0.28em] uppercase text-terracotta">
+        {{ value.eyebrow }}
+      </div>
+    </div>
+    <div>
+      <h2 class="m-0 mb-9 font-serif font-medium text-[clamp(30px,4vw,52px)] leading-[1.16]
+                 max-w-[20ch] text-balance">
+        {{ value.heading }}
+      </h2>
+      <div class="text-[clamp(15px,1.4vw,18px)] leading-[1.75] font-light text-[#3a4a3b]
+                  max-w-[54ch] [&>p]:mb-6 [&>p:last-child]:mb-0">
+        {{ value.body|richtext }}
+      </div>
+      {% if value.stats %}
+      <div class="flex gap-[clamp(28px,5vw,64px)] mt-12 flex-wrap">
+        {% for stat in value.stats %}
+        <div>
+          <div class="font-serif text-[42px] leading-none text-moss">{{ stat.value }}</div>
+          <div class="text-[12px] tracking-[0.16em] uppercase text-muted-2 mt-2">{{ stat.label }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>

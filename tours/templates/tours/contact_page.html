@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% slugurl 'privacy' as privacy_url %}
+
+{% block content %}
+
+<header class="pt-[calc(74px+clamp(56px,11vh,120px))] pb-[clamp(40px,6vh,64px)]
+               px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1240px] mx-auto">
+    <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">Связаться с нами</div>
+    <h1 class="m-0 mb-6 font-serif font-medium text-[clamp(40px,6.4vw,92px)] leading-[1.04]
+               max-w-[16ch] text-balance">
+      Давайте найдём ваш маршрут
+    </h1>
+    {% if page.intro %}
+    <p class="m-0 max-w-[52ch] text-[clamp(15px,1.5vw,18px)] leading-relaxed font-light text-muted">
+      {{ page.intro|striptags }}
+    </p>
+    {% endif %}
+  </div>
+</header>
+
+<section class="pb-[clamp(80px,12vh,140px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1240px] mx-auto grid grid-cols-1 md:grid-cols-[0.85fr_1.15fr]
+              gap-[clamp(48px,8vw,120px)] items-start">
+
+    {# Left: photo + contact info #}
+    <div>
+      {% if page.side_image %}
+      {% image page.side_image fill-800x600 format-webp as si %}
+      <div class="rounded-[20px] overflow-hidden shadow-zen mb-9">
+        <img src="{{ si.url }}" alt="" class="block w-full h-[clamp(240px,34vw,360px)] object-cover">
+      </div>
+      {% endif %}
+
+      <div class="flex flex-col gap-6">
+        {% if page.email %}
+        <div>
+          <div class="text-[11.5px] tracking-[0.2em] uppercase text-muted-2 mb-2">Почта</div>
+          <a href="mailto:{{ page.email }}"
+             class="font-serif text-[26px] text-moss no-underline hover:text-terracotta transition-colors">
+            {{ page.email }}
+          </a>
+        </div>
+        <div class="h-px bg-bamboo-line"></div>
+        {% endif %}
+        {% if page.telegram or page.whatsapp %}
+        <div>
+          <div class="text-[11.5px] tracking-[0.2em] uppercase text-muted-2 mb-2">Мессенджеры</div>
+          <div class="flex gap-6 font-serif text-[22px]">
+            {% if page.telegram %}
+            <a href="{{ page.telegram }}" class="text-moss no-underline hover:text-terracotta transition-colors">
+              Telegram
+            </a>
+            {% endif %}
+            {% if page.whatsapp %}
+            <a href="{{ page.whatsapp }}" class="text-moss no-underline hover:text-terracotta transition-colors">
+              WhatsApp
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="h-px bg-bamboo-line"></div>
+        {% endif %}
+        {% if page.address %}
+        <div>
+          <div class="text-[11.5px] tracking-[0.2em] uppercase text-muted-2 mb-2">Студия</div>
+          <div class="text-[16px] leading-relaxed font-light text-[#3a4a3b]">
+            {{ page.address }}<br>{{ page.hours }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Right: form #}
+    <div class="bg-[#EFEAE0] rounded-[24px] p-[clamp(28px,4vw,52px)] shadow-zen">
+      <div x-data="contactForm()" x-show="!sent">
+        <h2 class="m-0 mb-7 font-serif font-medium text-[clamp(24px,2.8vw,34px)]">Оставить заявку</h2>
+        <form @submit.prevent="submit($event)" novalidate>
+          {% csrf_token %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-7 gap-y-6">
+            {% for field in form %}
+            <div class="{% if field.name == 'message' %}sm:col-span-2{% endif %}">
+              <label class="block text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1.5">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+              <p class="mt-1 text-[12px] text-terracotta-dark">{{ field.errors.0 }}</p>
+              {% endif %}
+            </div>
+            {% endfor %}
+
+            {# Мат-капча #}
+            <div class="sm:col-span-2">
+              <label class="block text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1.5">
+                Сколько будет {{ captcha_a }} + {{ captcha_b }}? *
+              </label>
+              <input type="text" inputmode="numeric" pattern="[0-9]*"
+                     name="captcha_answer" required
+                     class="w-full bg-transparent border-0 border-b border-bamboo-line pb-2
+                            text-[15px] font-light text-moss outline-none
+                            focus:border-moss transition-colors placeholder:text-muted-2"
+                     placeholder="Введите число">
+              <p x-show="errors.captcha_answer" x-text="errors.captcha_answer"
+                 class="mt-1 text-[12px] text-terracotta-dark" style="display:none"></p>
+            </div>
+
+            {# Согласие на обработку ПД #}
+            <div class="sm:col-span-2">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <span class="relative w-[18px] h-[18px] flex-shrink-0 mt-[2px]">
+                  <input type="checkbox" name="consent" required
+                         class="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer m-0 z-10">
+                  <span class="absolute inset-0 rounded-[3px] border border-bamboo-line bg-rice/60
+                               pointer-events-none transition-all duration-150
+                               peer-checked:bg-terracotta peer-checked:border-terracotta
+                               peer-focus-visible:ring-2 peer-focus-visible:ring-terracotta/30
+                               peer-focus-visible:ring-offset-1"></span>
+                  <svg class="absolute inset-0 w-full h-full p-[3px] text-rice pointer-events-none
+                              opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                       viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M2 7.5l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="text-[13px] font-light text-muted leading-relaxed">
+                  Я согласен(а) с
+                  <a href="{{ privacy_url|default:'/privacy/' }}" target="_blank"
+                     class="text-terracotta hover:underline">Политикой обработки персональных данных</a> *
+                </span>
+              </label>
+              <p x-show="errors.consent" x-text="errors.consent"
+                 class="mt-1.5 ml-[27px] text-[12px] text-terracotta-dark" style="display:none"></p>
+            </div>
+          </div>
+
+          <p x-show="errors.__all__" x-text="errors.__all__"
+             class="mt-5 text-[12.5px] text-terracotta-dark text-center" style="display:none"></p>
+
+          <button type="submit" :disabled="loading"
+                  class="mt-8 w-full bg-terracotta text-rice border-0 rounded-full py-[18px]
+                         text-[13px] tracking-[0.18em] uppercase cursor-pointer font-sans
+                         hover:bg-terracotta-dark transition-colors duration-300
+                         disabled:opacity-60 disabled:cursor-not-allowed">
+            <span x-show="!loading">Отправить заявку</span>
+            <span x-show="loading" style="display:none">Отправляем…</span>
+          </button>
+        </form>
+      </div>
+
+      <div x-show="sent" class="text-center py-[clamp(30px,6vw,70px)]" style="display:none">
+        <div class="w-16 h-16 rounded-full bg-terracotta flex items-center justify-center mx-auto mb-6">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="1.6">
+            <path d="M5 12.5l4.5 4.5L19 7"/>
+          </svg>
+        </div>
+        <h2 class="m-0 mb-3.5 font-serif font-medium text-[clamp(26px,3.2vw,38px)]">
+          Заявка отправлена
+        </h2>
+        <p class="m-0 text-[16px] leading-relaxed font-light text-muted max-w-[38ch] mx-auto">
+          Мы свяжемся с вами в течение одного дня и начнём собирать ваш маршрут.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('contactForm', () => ({
+    sent: false,
+    loading: false,
+    errors: {},
+    async submit(e) {
+      this.errors = {};
+      this.loading = true;
+      const form = e.target;
+      const data = new FormData(form);
+      try {
+        const r = await fetch(window.location.href, {
+          method: 'POST',
+          body: data,
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        if (r.ok) {
+          this.sent = true;
+        } else {
+          const json = await r.json().catch(() => ({}));
+          const raw = json.errors || {};
+          // Flatten arrays to single strings
+          this.errors = Object.fromEntries(
+            Object.entries(raw).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v])
+          );
+        }
+      } catch {
+        this.errors.__all__ = 'Ошибка соединения. Попробуйте ещё раз.';
+      } finally {
+        this.loading = false;
+      }
+    }
+  }));
+});
+</script>
+{% endblock %}

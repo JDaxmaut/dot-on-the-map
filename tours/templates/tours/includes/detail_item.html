@@ -1,0 +1,28 @@
+{# Usage: {% include "tours/includes/detail_item.html" with icon="clock" value=page.duration label="Длительность" %} #}
+<div class="flex flex-col items-center justify-center gap-2 py-6 px-4 text-center border-r border-bamboo-line last:border-0">
+  {% if icon == "clock" %}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+  </svg>
+  {% elif icon == "group" %}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <circle cx="9" cy="7" r="3"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+    <circle cx="18" cy="7" r="2"/><path d="M21 21v-1.5a3 3 0 00-2-2.8"/>
+  </svg>
+  {% elif icon == "bed" %}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <path d="M2 20v-8a2 2 0 012-2h16a2 2 0 012 2v8"/><path d="M2 14h20"/><path d="M7 14v-3"/>
+    <rect x="8" y="9" width="8" height="5" rx="1"/>
+  </svg>
+  {% elif icon == "mountain" %}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <path d="M3 20l7-14 4 8 2-3 5 9H3z"/>
+  </svg>
+  {% else %}
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <circle cx="12" cy="12" r="9"/>
+  </svg>
+  {% endif %}
+  <span class="font-serif font-medium text-[clamp(16px,2vw,20px)] text-moss leading-tight">{{ value }}</span>
+  <span class="text-[11px] tracking-[0.16em] uppercase text-muted-2">{{ label }}</span>
+</div>

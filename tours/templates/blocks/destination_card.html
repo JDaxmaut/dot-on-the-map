@@ -1,0 +1,29 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<a href="{% if value.link %}{% pageurl value.link %}{% else %}{% slugurl 'catalog' %}{% endif %}"
+   class="group block no-underline text-inherit">
+  <div class="aspect-[3/4] overflow-hidden rounded-[20px] shadow-zen relative">
+    {% if value.image %}
+      {% image value.image fill-900x1200 format-webp as img %}
+      <img src="{{ img.url }}" alt="{{ value.title }}" loading="lazy"
+           class="w-full h-full object-cover transition-transform duration-[1300ms]
+                  ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-105">
+    {% else %}
+      <div class="w-full h-full bg-bamboo flex items-center justify-center">
+        <span class="font-serif text-[20px] text-muted/50">{{ value.title }}</span>
+      </div>
+    {% endif %}
+  </div>
+  <div class="pt-6 px-1">
+    <div class="flex items-baseline justify-between gap-3.5">
+      <h3 class="m-0 font-serif font-medium text-[29px] leading-tight">{{ value.title }}</h3>
+      <span class="text-[12px] tracking-[0.14em] uppercase text-muted-2">{{ value.price_from }}</span>
+    </div>
+    <p class="mt-2.5 mb-4 text-[14.5px] leading-relaxed font-light text-muted max-w-[34ch]">
+      {{ value.description }}
+    </p>
+    <span class="text-[12.5px] tracking-[0.18em] uppercase text-terracotta inline-flex items-center gap-2">
+      Смотреть туры
+      <span class="transition-transform duration-500 group-hover:translate-x-2">→</span>
+    </span>
+  </div>
+</a>

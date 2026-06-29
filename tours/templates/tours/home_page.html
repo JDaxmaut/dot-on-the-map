@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+
+{# ── HERO ────────────────────────────────────────────────── #}
+<section class="relative h-screen min-h-[620px] overflow-hidden bg-moss">
+  {% if page.hero_image %}
+    {% image page.hero_image fill-1920x1080 format-webp as img %}
+    <img src="{{ img.url }}" alt="{{ img.alt }}"
+         loading="eager" fetchpriority="high" decoding="async"
+         class="absolute inset-0 w-full h-full object-cover"
+         style="animation:kenburns 24s ease-in-out infinite alternate;will-change:transform">
+  {% else %}
+    <img src="{% static 'img/hero-hills.webp' %}" alt="" aria-hidden="true"
+         loading="eager" fetchpriority="high" decoding="async"
+         class="absolute inset-0 w-full h-full object-cover">
+  {% endif %}
+  <div class="absolute inset-0 pointer-events-none"
+       style="background:linear-gradient(to bottom,rgba(44,62,45,0.42) 0%,rgba(44,62,45,0) 22%),linear-gradient(to top,rgba(44,62,45,0.65) 0%,rgba(44,62,45,0.14) 40%,rgba(44,62,45,0) 68%)">
+  </div>
+
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-[0.055]"
+       style="mix-blend-mode:overlay;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.8%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-size:180px 180px">
+  </div>
+
+  <div class="absolute inset-0 flex flex-col items-center justify-center
+              text-center px-6 text-rice">
+    <p class="mb-6 text-[clamp(11px,3vw,13px)] tracking-[0.34em] uppercase text-rice/80">
+      {{ page.hero_eyebrow }}
+    </p>
+    <h1 class="m-0 font-serif font-medium leading-none tracking-[0.01em] max-w-[14ch]
+               text-[clamp(44px,8.4vw,112px)] text-balance">
+      {{ page.hero_title }}
+    </h1>
+    {% if page.hero_subtitle %}
+    <p class="hidden sm:block mt-7 max-w-[50ch] leading-relaxed text-rice/90
+              text-[clamp(15px,1.5vw,18px)]">
+      {{ page.hero_subtitle }}
+    </p>
+    {% endif %}
+    <a href="{% slugurl 'catalog' %}"
+       class="mt-10 inline-flex items-center gap-3 px-9 py-[18px] rounded-full
+              border border-terracotta text-[13px] tracking-[0.18em] uppercase
+              text-rice no-underline transition-colors duration-500
+              hover:bg-terracotta">
+      {{ page.hero_cta_text|default:"Смотреть направления" }}
+    </a>
+  </div>
+
+  <a href="#manifest" aria-label="Прокрутить"
+     class="absolute left-1/2 -translate-x-1/2 bottom-9 flex flex-col items-center gap-2.5 text-rice no-underline">
+    <span class="text-[10.5px] tracking-[0.28em] uppercase opacity-70">Прокрутить</span>
+    <svg class="animate-arrow" width="20" height="30" viewBox="0 0 20 30" fill="none"
+         stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 2v22"/><path d="M3 18l7 7 7-7"/>
+    </svg>
+  </a>
+</section>
+
+{# ── STREAMFIELD SECTIONS ────────────────────────────────── #}
+{% for block in page.body %}
+  {% if block.block_type != 'quote' %}{% include_block block %}{% endif %}
+  {% if block.block_type == 'manifest' %}
+
+  {# ── DIRECTIONS CTA ──────────────────────────────────────── #}
+  <section id="dest" class="px-[clamp(20px,6vw,96px)] py-[clamp(96px,16vh,190px)] text-center">
+    <div class="max-w-[760px] mx-auto">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-[22px]">Куда мы едем</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(32px,5vw,60px)] leading-[1.1]
+                 tracking-[0.005em] text-balance">
+        Бали, Япония, Вьетнам и другие авторские маршруты по Азии
+      </h2>
+      <p class="mt-7 mx-auto max-w-[46ch] text-[clamp(15px,1.5vw,18px)] leading-relaxed
+                font-light text-muted">
+        Каждый маршрут собран вручную — проверенные тропы, локальные мастера, места с характером.
+        Посмотрите все направления и выберите своё.
+      </p>
+      <a href="{% slugurl 'catalog' %}"
+         class="mt-10 inline-flex items-center gap-3 px-11 py-[18px] bg-terracotta text-rice
+                no-underline rounded-full text-[13px] tracking-[0.18em] uppercase
+                transition-all duration-400 hover:bg-terracotta-dark hover:-translate-y-0.5">
+        Смотреть все туры →
+      </a>
+    </div>
+  </section>
+
+  {% endif %}
+{% endfor %}
+
+{% endblock %}

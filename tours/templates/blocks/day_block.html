@@ -1,0 +1,21 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+{#
+  DayBlock — не используется как standalone секция.
+  Рендерится через tour_page.html напрямую из page.itinerary.
+  Этот файл — запасной вариант для include_block.
+#}
+<div class="flex flex-col md:flex-row gap-[clamp(16px,2.5vw,36px)] py-5">
+  <div>
+    <span class="text-[11px] tracking-[0.18em] uppercase text-muted-2">День {{ value.day_number }}</span>
+    <h3 class="m-0 mt-1 mb-3 font-serif font-medium text-[22px]">{{ value.title }}</h3>
+    <div class="text-[15px] leading-[1.8] font-light text-[#4a564a]">
+      {{ value.description|richtext }}
+    </div>
+  </div>
+  {% if value.image %}
+  {% image value.image fill-600x400 format-webp as di %}
+  <div class="flex-shrink-0 w-full md:w-[240px] h-[180px] rounded-2xl overflow-hidden shadow-zen">
+    <img src="{{ di.url }}" alt="{{ value.title }}" class="w-full h-full object-cover">
+  </div>
+  {% endif %}
+</div>

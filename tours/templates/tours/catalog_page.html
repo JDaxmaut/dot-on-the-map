@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+{# Единый Alpine scope для всей страницы #}
+<div x-data="catalogFilter()">
+
+{# ── PAGE HEADER ─────────────────────────────────────────── #}
+<header class="pt-[calc(74px+clamp(48px,9vh,100px))] pb-[clamp(32px,5vh,56px)]
+               px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1320px] mx-auto flex items-end justify-between gap-8 flex-wrap">
+    <div>
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">Все направления</div>
+      <h1 class="m-0 font-serif font-medium text-[clamp(38px,6vw,76px)] leading-[1.04]">
+        Выберите свой маршрут
+      </h1>
+    </div>
+    <p class="m-0 max-w-[38ch] text-[15px] leading-relaxed font-light text-muted pb-2">
+      {{ page.intro|default:"Авторские туры по Азии — каждый собран под небольшую группу и конкретную цель." }}
+    </p>
+  </div>
+</header>
+
+{# ── STICKY FILTER BAR ───────────────────────────────────── #}
+<div class="sticky top-[74px] z-[60] bg-rice/95 backdrop-blur-md px-[clamp(20px,6vw,96px)]"
+     :class="{'shadow-[0_1px_0_#E3DCCF]': stuck}" @scroll.window="stuck = window.scrollY > 200">
+  <div class="max-w-[1320px] mx-auto">
+
+    {# Search row — всегда видима #}
+    <div class="flex items-center gap-3 py-3.5 border-b border-bamboo-line">
+      <svg class="flex-shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none"
+           stroke="#9a9384" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l4.5 4.5"/>
+      </svg>
+      <input x-model="search" type="search"
+             placeholder="Найти тур…"
+             class="flex-1 bg-transparent border-0 outline-none text-moss font-sans
+                    text-[14px] font-light placeholder:text-[#a9a293] min-w-0">
+      <button x-show="search" @click="search=''"
+              class="text-muted-2 hover:text-moss transition-colors p-1 flex-shrink-0">
+        <svg width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+
+      {# Mobile: кнопка фильтров — показывает активный фильтр или "Фильтры" #}
+      <button @click="showFilters = !showFilters"
+              class="md:hidden flex items-center gap-1.5 flex-shrink-0 ml-1
+                     text-[11.5px] tracking-[0.14em] uppercase border rounded-full
+                     px-3.5 py-1.5 transition-all duration-300 cursor-pointer bg-transparent"
+              :class="filter !== 'all'
+                ? 'border-terracotta text-terracotta'
+                : 'border-bamboo text-muted'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M7 12h10M11 18h2"/>
+        </svg>
+        <span x-text="filter !== 'all' ? activeFilterLabel : 'Фильтры'">Фильтры</span>
+        <svg class="transition-transform duration-300" :class="showFilters ? 'rotate-180' : ''"
+             width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    {# Desktop: фильтры + сортировка всегда видимы #}
+    <div class="hidden md:flex items-center justify-between gap-4 py-3.5 flex-wrap">
+      <div class="flex gap-2 flex-wrap">
+        {% for tag in filter_tags %}
+        <button @click="filter='{{ tag.id }}'"
+                class="inline-flex items-center px-5 py-2 rounded-full text-[12.5px]
+                       tracking-[0.14em] uppercase border font-sans transition-all duration-300 cursor-pointer"
+                :class="filter==='{{ tag.id }}'
+                  ? 'bg-terracotta border-terracotta text-rice'
+                  : 'border-bamboo text-muted hover:border-terracotta hover:text-terracotta'">
+          {{ tag.label }}
+        </button>
+        {% endfor %}
+      </div>
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <span class="text-[11.5px] tracking-[0.12em] uppercase text-muted-2 mr-1">Сортировка:</span>
+        {% for s in sort_options %}
+        <button @click="setSort('{{ s.id }}')"
+                class="font-sans text-[12.5px] tracking-[0.12em] uppercase px-3.5 py-2 rounded-md transition-all cursor-pointer"
+                :class="sort==='{{ s.id }}' ? 'text-moss bg-[#E3DCCF]' : 'text-muted hover:text-moss'">
+          {{ s.label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# Mobile: выпадающая панель фильтров #}
+    <div x-show="showFilters" x-collapse class="md:hidden">
+      <div class="flex gap-2 overflow-x-auto py-3 scrollbar-none" style="scrollbar-width:none">
+        {% for tag in filter_tags %}
+        <button @click="filter='{{ tag.id }}'; showFilters = false"
+                class="inline-flex items-center flex-shrink-0 px-4 py-1.5 rounded-full text-[12px]
+                       tracking-[0.14em] uppercase border font-sans transition-all duration-300 cursor-pointer"
+                :class="filter==='{{ tag.id }}'
+                  ? 'bg-terracotta border-terracotta text-rice'
+                  : 'border-bamboo text-muted'">
+          {{ tag.label }}
+        </button>
+        {% endfor %}
+      </div>
+      <div class="flex items-center gap-1.5 pb-3 border-t border-bamboo-line pt-2.5">
+        <span class="text-[11px] tracking-[0.12em] uppercase text-muted-2 mr-0.5">Сорт.:</span>
+        {% for s in sort_options %}
+        <button @click="setSort('{{ s.id }}')"
+                class="font-sans text-[11.5px] tracking-[0.10em] uppercase px-3 py-1.5 rounded-md transition-all cursor-pointer"
+                :class="sort==='{{ s.id }}' ? 'text-moss bg-[#E3DCCF]' : 'text-muted'">
+          {{ s.label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{# ── TOURS GRID ──────────────────────────────────────────── #}
+<section class="px-[clamp(20px,6vw,96px)] py-[clamp(32px,5vh,56px)] pb-[clamp(80px,13vh,140px)]">
+  <div class="max-w-[1320px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-[clamp(20px,2.8vw,38px)] gap-y-[clamp(28px,3.5vw,52px)]"
+         id="tours-grid">
+      {% for tour in tours %}
+      <a href="{% pageurl tour %}"
+         class="group block no-underline text-inherit"
+         data-country="{{ tour.country_tag }}"
+         data-title="{{ tour.title|lower }}"
+         data-price="{{ tour.price_num }}"
+         data-idx="{{ forloop.counter0 }}"
+         x-show="matchesTour($el)">
+
+        <div class="overflow-hidden rounded-[20px] shadow-zen relative aspect-[4/3] bg-bamboo">
+          {% if tour.hero_images %}
+            {% with tour.hero_images.0.value as img %}
+              {% image img fill-900x675 format-webp as thumb %}
+              <img src="{{ thumb.url }}" alt="{{ tour.title }}" loading="lazy"
+                   class="w-full h-full object-cover transition-transform duration-[1300ms]
+                          ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-105">
+            {% endwith %}
+          {% else %}
+            <div class="w-full h-full bg-bamboo flex items-center justify-center">
+              <span class="font-serif text-[20px] text-muted opacity-40">{{ tour.location }}</span>
+            </div>
+          {% endif %}
+          <div class="absolute top-4 right-4 bg-rice/[0.88] backdrop-blur-sm rounded-full
+                      px-4 py-1.5 text-[11.5px] tracking-[0.14em] uppercase text-moss">
+            {{ tour.country_tag|capfirst }}
+          </div>
+        </div>
+
+        <div class="pt-5 px-0.5">
+          <div class="flex items-start justify-between gap-4 mb-2.5">
+            <h2 class="m-0 font-serif font-medium text-[clamp(22px,2.6vw,30px)] leading-[1.12] max-w-[18ch]">
+              {{ tour.title }}
+            </h2>
+            <span class="text-[12px] tracking-[0.14em] uppercase text-muted-2 flex-shrink-0 mt-1.5">
+              {{ tour.price_from }}
+            </span>
+          </div>
+          <div class="flex items-center gap-4 mb-3.5">
+            <span class="text-[13px] font-light text-muted">{{ tour.location }}</span>
+            <span class="w-[3px] h-[3px] rounded-full bg-bamboo flex-shrink-0"></span>
+            <span class="text-[13px] font-light text-muted">{{ tour.duration }}</span>
+          </div>
+          <p class="m-0 mb-4 text-[14px] leading-[1.65] font-light text-muted max-w-[44ch]">
+            {{ tour.summary|truncatechars:120 }}
+          </p>
+          <span class="text-[12.5px] tracking-[0.18em] uppercase text-terracotta
+                       inline-flex items-center gap-2">
+            Подробнее
+            <span class="transition-transform duration-500 group-hover:translate-x-1.5">→</span>
+          </span>
+        </div>
+      </a>
+      {% empty %}
+      <div class="col-span-2 text-center py-20">
+        <p class="text-[16px] font-light text-muted-2">Туры не найдены.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div x-show="noResults" class="text-center py-20" style="display:none">
+      <div class="font-serif text-[clamp(60px,10vw,110px)] leading-none text-moss/10">∅</div>
+      <p class="mt-4 text-[16px] font-light text-muted-2">По вашему запросу ничего не найдено.</p>
+      <button @click="search=''; filter='all'"
+              class="mt-5 bg-transparent border border-bamboo rounded-full px-7 py-3
+                     text-[12.5px] tracking-[0.16em] uppercase text-muted font-sans
+                     hover:border-terracotta hover:text-terracotta transition-colors cursor-pointer">
+        Сбросить фильтры
+      </button>
+    </div>
+  </div>
+</section>
+
+</div>{# end x-data #}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('catalogFilter', () => ({
+    search: '',
+    filter: 'all',
+    sort: 'default',
+    stuck: false,
+    showFilters: false,
+
+    get activeFilterLabel() {
+      const labels = { {% for tag in filter_tags %}'{{ tag.id }}': '{{ tag.label }}',{% endfor %} };
+      return labels[this.filter] || 'Все';
+    },
+
+    init() {
+      this.$watch('sort', () => this.doSort());
+    },
+
+    setSort(val) {
+      this.sort = val;
+    },
+
+    doSort() {
+      const grid = document.getElementById('tours-grid');
+      if (!grid) return;
+      const items = [...grid.querySelectorAll('a[data-idx]')];
+      if (this.sort === 'price_asc') {
+        items.sort((a, b) => +a.dataset.price - +b.dataset.price);
+      } else if (this.sort === 'price_desc') {
+        items.sort((a, b) => +b.dataset.price - +a.dataset.price);
+      } else {
+        items.sort((a, b) => +a.dataset.idx - +b.dataset.idx);
+      }
+      items.forEach(el => grid.appendChild(el));
+    },
+
+    matchesTour(el) {
+      const country = el.dataset.country || '';
+      const title   = el.dataset.title   || '';
+      const q       = this.search.trim().toLowerCase();
+      const tagOk   = this.filter === 'all' || country === this.filter;
+      const searchOk = !q || title.includes(q) || country.includes(q);
+      return tagOk && searchOk;
+    },
+
+    get noResults() {
+      // reference reactive props so Alpine re-evaluates on change
+      void this.search; void this.filter;
+      const cards = [...document.querySelectorAll('#tours-grid a[data-country]')];
+      return cards.length > 0 && cards.every(el => el.style.display === 'none');
+    },
+  }));
+});
+</script>
+{% endblock %}

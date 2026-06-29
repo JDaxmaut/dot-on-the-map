@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div x-data="tourPage()">
+
+{# ── HERO GALLERY ────────────────────────────────────────── #}
+<section class="relative h-[80vh] min-h-[520px] overflow-hidden bg-moss">
+
+  {% for item in page.hero_images %}
+    {% with item.value as img %}
+      {% image img fill-1920x1080 format-webp as slide %}
+      <img src="{{ slide.url }}" alt="{{ page.title }}"
+           loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1100ms]"
+           :class="active === {{ forloop.counter0 }} ? 'opacity-100' : 'opacity-0'">
+    {% endwith %}
+  {% empty %}
+    <div class="absolute inset-0 bg-gradient-to-br from-moss/80 to-moss/40 flex items-center justify-center">
+      <span class="font-serif text-[32px] text-rice/50">{{ page.location }}</span>
+    </div>
+  {% endfor %}
+
+  <div class="absolute inset-0 pointer-events-none"
+       style="background:linear-gradient(to bottom,rgba(44,62,45,0.40) 0%,rgba(44,62,45,0) 20%),linear-gradient(to top,rgba(44,62,45,0.75) 0%,rgba(44,62,45,0.18) 44%,rgba(44,62,45,0) 70%)">
+  </div>
+
+  {# Grain внутри hero — compositing ограничен секцией #}
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-[0.055]"
+       style="mix-blend-mode:overlay;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.8%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-size:180px 180px">
+  </div>
+
+  <div class="absolute bottom-[clamp(96px,15vh,150px)] left-[clamp(20px,5vw,72px)]
+              right-[clamp(20px,5vw,72px)] text-rice">
+    <div class="flex items-center gap-2.5 text-[12px] tracking-[0.24em] uppercase mb-4 opacity-90">
+      <span class="w-5 h-px bg-terracotta inline-block"></span>
+      {{ page.location }}
+    </div>
+    <h1 class="m-0 mb-4 font-serif font-medium text-[clamp(36px,6.6vw,84px)] leading-[1.02]">
+      {{ page.title }}
+    </h1>
+    {% if page.tags.all %}
+    <div class="flex items-center gap-2.5 flex-wrap">
+      {% for tag in page.tags.all %}
+      <span class="inline-flex px-3.5 py-1 border border-rice/50 rounded-full
+                   text-[11.5px] tracking-[0.12em] uppercase">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if page.hero_images %}
+  <div class="absolute bottom-7 left-0 right-0 flex justify-center gap-2.5 px-5">
+    {% for item in page.hero_images %}
+      {% with item.value as img %}
+        {% image img fill-200x140 format-webp as thumb %}
+        <button @click="setSlide({{ forloop.counter0 }})"
+                class="w-[clamp(54px,7.5vw,84px)] h-[clamp(38px,5vw,54px)] border-0 p-0
+                       rounded-[8px] overflow-hidden bg-moss cursor-pointer transition-all duration-300"
+                :class="active === {{ forloop.counter0 }}
+                  ? 'opacity-100 ring-2 ring-terracotta' : 'opacity-50 hover:opacity-85'">
+          <img src="{{ thumb.url }}" alt="" class="w-full h-full object-cover">
+        </button>
+      {% endwith %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+{# ── DETAILS BAR ─────────────────────────────────────────── #}
+<div class="grid grid-cols-2 md:grid-cols-4 bg-bamboo">
+  {% include "tours/includes/detail_item.html" with icon="clock"    value=page.duration    label="Длительность" %}
+  {% include "tours/includes/detail_item.html" with icon="group"    value=page.group_size  label="Группа" %}
+  {% include "tours/includes/detail_item.html" with icon="bed"      value=page.comfort     label="Проживание" %}
+  {% include "tours/includes/detail_item.html" with icon="mountain" value=page.difficulty  label="Сложность" %}
+</div>
+
+{# ── ОПИСАНИЕ ────────────────────────────────────────────── #}
+<section class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="max-w-[800px] mx-auto mb-[clamp(48px,7vw,84px)] text-center">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">Коротко о туре</div>
+      <p class="m-0 font-serif font-medium text-[clamp(22px,3.2vw,38px)] leading-[1.34] text-balance">
+        {{ page.summary }}
+      </p>
+    </div>
+    {% if page.description %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-[clamp(28px,5vw,72px)]
+                border-t border-bamboo-line pt-[clamp(36px,5vw,56px)]">
+      <div class="text-[clamp(14.5px,1.4vw,17px)] leading-[1.8] font-light text-[#3a4a3b]">
+        {{ page.description|richtext }}
+      </div>
+      {% if page.highlights %}
+      <div>
+        <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">Особенности</div>
+        {% for h in page.highlights %}
+        <div class="flex items-start gap-3.5 py-3 border-b border-[#EDE8DF]">
+          <div class="w-1.5 h-1.5 rounded-full bg-terracotta mt-2 flex-shrink-0"></div>
+          <span class="text-[clamp(13.5px,1.3vw,15.5px)] leading-[1.65] font-light text-[#3a4a3b]">
+            {{ h.value }}
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{# ── ДАТЫ И БРОНИРОВАНИЕ ─────────────────────────────────── #}
+<section id="booking"
+         class="bg-[#EFEAE0] border-t border-bamboo-line
+                py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="flex items-end justify-between gap-6 flex-wrap mb-[clamp(32px,4vw,48px)]">
+      <div>
+        <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Ближайшие заезды</div>
+        <h2 class="m-0 font-serif font-medium text-[clamp(28px,3.8vw,48px)]">Выберите дату</h2>
+      </div>
+      <p class="text-[13px] font-light text-muted">Цены указаны за человека</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[clamp(14px,2vw,22px)] mb-[clamp(32px,5vw,52px)]">
+      {% for date in page.tour_dates.all %}
+      <div @click="selectDate({{ forloop.counter0 }})"
+           class="border rounded-2xl p-[18px_20px] cursor-pointer transition-all duration-300"
+           :class="dateIdx === {{ forloop.counter0 }}
+             ? 'border-terracotta bg-[#FBF5F0]'
+             : 'border-bamboo-line hover:border-terracotta hover:-translate-y-0.5'">
+        <div class="flex justify-between items-start mb-3">
+          <div class="font-serif text-[clamp(20px,2.4vw,28px)] leading-[1.1] text-moss">
+            {{ date.start_date|date:"j M" }} — {{ date.end_date|date:"j M" }}
+          </div>
+          <span class="text-[11px] px-2.5 py-1 rounded-full ml-2 flex-shrink-0
+                       {% if date.spots_left == 0 %}bg-[#F5E8E4] text-terracotta-dark
+                       {% elif date.spots_left <= 2 %}bg-[#FDF3E7] text-[#c4872a]
+                       {% else %}bg-[#EDF2EA] text-[#4d7a5a]{% endif %}">
+            {% if date.spots_left == 0 %}Мест нет
+            {% elif date.spots_left == 1 %}1 место
+            {% else %}{{ date.spots_left }} места{% endif %}
+          </span>
+        </div>
+        <div class="font-serif font-medium text-[clamp(22px,2.6vw,32px)] text-moss mb-2.5">
+          ${{ date.price }}
+        </div>
+        <div class="h-[3px] bg-bamboo-line rounded-sm overflow-hidden mb-2.5">
+          <div class="h-full rounded-sm transition-all duration-500
+                      {% if date.spots_left <= 1 %}bg-terracotta
+                      {% elif date.spots_left <= 3 %}bg-[#d4a24a]
+                      {% else %}bg-[#7a9a6a]{% endif %}"
+               style="width:{{ date.fill_percent }}%"></div>
+        </div>
+        <div class="text-[12px] font-light text-muted-2">
+          Осталось {{ date.spots_left }} из {{ date.total_spots }}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-3 py-10 text-center text-muted-2 text-[15px] font-light">
+        Скоро появятся новые даты. Напишите нам, чтобы узнать первыми.
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if page.tour_dates.all %}
+    <div class="bg-rice rounded-[20px] p-[clamp(24px,3.5vw,40px)]
+                flex items-center justify-between gap-[clamp(16px,3vw,40px)]
+                flex-wrap shadow-zen">
+      <div>
+        <div class="text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1.5">Выбранный заезд</div>
+        <div class="font-serif text-[clamp(18px,2.4vw,26px)] text-moss" x-text="selectedLabel"></div>
+      </div>
+      <div class="flex items-center gap-[clamp(18px,4vw,52px)] flex-wrap">
+        <div>
+          <div class="text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1">Стоимость</div>
+          <div class="font-serif text-[clamp(28px,4vw,52px)] leading-none text-moss" x-text="selectedPrice"></div>
+          <div class="text-[12px] text-muted-2 mt-0.5">на человека</div>
+        </div>
+        <div>
+          <div class="text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1">Свободных мест</div>
+          <div class="font-serif text-[clamp(28px,4vw,52px)] leading-none text-terracotta" x-text="selectedSpots"></div>
+          <div class="text-[12px] text-muted-2 mt-0.5">из {{ page.group_size_max|default:8 }} в группе</div>
+        </div>
+        <a :href="bookingUrl"
+           class="px-10 py-[18px] bg-terracotta text-rice no-underline rounded-full
+                  text-[13px] tracking-[0.16em] uppercase whitespace-nowrap
+                  hover:bg-terracotta-dark transition-colors duration-300">
+          Забронировать
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{# ── МАРШРУТ ─────────────────────────────────────────────── #}
+{% if page.itinerary %}
+<section id="itinerary" class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[920px] mx-auto">
+    <div class="mb-[clamp(32px,5vw,52px)]">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Программа</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(28px,4vw,50px)]">День за днём</h2>
+    </div>
+    <div class="relative pl-[clamp(20px,3.5vw,38px)]">
+      <div class="absolute left-[5px] top-2 bottom-2 w-px bg-bamboo"></div>
+      {% for item in page.itinerary %}
+        {% with item.value as day %}
+        <div x-data="{ open: {{ forloop.first|yesno:'true,false' }} }"
+             class="relative py-1">
+          <div class="absolute -left-[clamp(20px,3.5vw,38px)] translate-x-[5px] top-7
+                      w-2.5 h-2.5 rounded-full bg-terracotta shadow-[0_0_0_4px_#F4F1EA]"></div>
+          <button @click="open = !open"
+                  class="w-full flex items-center justify-between gap-4 bg-transparent border-0
+                         border-b border-bamboo-line py-5 px-0.5 cursor-pointer text-left font-sans">
+            <div class="flex items-baseline gap-[clamp(12px,2vw,26px)] min-w-0">
+              <span class="text-[11px] tracking-[0.18em] uppercase text-muted-2 flex-shrink-0 w-[90px]">
+                День {{ day.day_number }}
+              </span>
+              <span class="font-serif font-medium text-[clamp(19px,2.4vw,28px)] text-moss leading-[1.15]">
+                {{ day.title }}
+              </span>
+            </div>
+            <svg :class="open ? 'rotate-45' : ''"
+                 class="flex-shrink-0 transition-transform duration-300"
+                 width="18" height="18" viewBox="0 0 20 20" fill="none"
+                 stroke="#C86B49" stroke-width="1.5">
+              <path d="M10 3v14M3 10h14"/>
+            </svg>
+          </button>
+          <div x-show="open" x-collapse>
+            <div class="flex flex-col md:flex-row gap-[clamp(16px,2.5vw,36px)] py-5 px-0.5">
+              <div class="flex-1 text-[clamp(14px,1.3vw,16.5px)] leading-[1.8] font-light text-[#4a564a]">
+                {{ day.description|richtext }}
+              </div>
+              {% if day.image %}
+              {% image day.image fill-600x400 format-webp as di %}
+              <div class="flex-shrink-0 w-full md:w-[clamp(160px,24vw,260px)]
+                          h-[200px] md:h-[clamp(120px,17vw,180px)] rounded-2xl overflow-hidden shadow-zen">
+                <img src="{{ di.url }}" alt="{{ day.title }}" class="w-full h-full object-cover">
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ── ПРОЖИВАНИЕ ──────────────────────────────────────────── #}
+{% if page.accommodation %}
+<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="mb-[clamp(30px,4vw,48px)]">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Проживание</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(26px,3.6vw,46px)]">Где вы остановитесь</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-[clamp(16px,2.2vw,28px)]">
+      {% for item in page.accommodation %}
+        {% with item.value as acc %}
+        <div>
+          {% if acc.image %}
+          {% image acc.image fill-600x450 format-webp as ai %}
+          <div class="rounded-2xl overflow-hidden shadow-zen mb-4 aspect-[4/3]">
+            <img src="{{ ai.url }}" alt="{{ acc.name }}" class="w-full h-full object-cover">
+          </div>
+          {% else %}
+          <div class="rounded-2xl bg-bamboo mb-4 aspect-[4/3] flex items-center justify-center">
+            <span class="font-serif text-[15px] text-muted/60">{{ acc.name }}</span>
+          </div>
+          {% endif %}
+          <div class="font-serif text-[20px] mb-1">{{ acc.name }}</div>
+          <div class="text-[12px] tracking-[0.12em] uppercase text-terracotta mb-2">{{ acc.type }}</div>
+          <p class="m-0 text-[13.5px] leading-[1.65] font-light text-muted">{{ acc.description }}</p>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ── ВКЛЮЧЕНО / НЕ ВКЛЮЧЕНО ──────────────────────────────── #}
+{% if page.included or page.excluded %}
+<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)]
+                bg-[#EFEAE0] border-t border-bamboo-line border-b border-bamboo-line">
+  <div class="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-[clamp(28px,6vw,80px)]">
+    {% if page.included %}
+    <div>
+      <h3 class="m-0 mb-6 font-serif font-medium text-[clamp(22px,2.8vw,32px)]">Включено</h3>
+      {% for item in page.included %}
+      <div class="flex items-start gap-3.5 py-3 border-b border-moss/10">
+        <svg class="flex-shrink-0 mt-0.5" width="18" height="18" viewBox="0 0 20 20"
+             fill="none" stroke="#2C3E2D" stroke-width="1.5"><path d="M4 10.5l4 4 8-9"/></svg>
+        <span class="text-[14.5px] leading-relaxed font-light text-[#3a4a3b]">{{ item.value }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if page.excluded %}
+    <div>
+      <h3 class="m-0 mb-6 font-serif font-medium text-[clamp(22px,2.8vw,32px)]">Не включено</h3>
+      {% for item in page.excluded %}
+      <div class="flex items-start gap-3.5 py-3 border-b border-moss/10">
+        <svg class="flex-shrink-0 mt-0.5" width="18" height="18" viewBox="0 0 20 20"
+             fill="none" stroke="#b89a86" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg>
+        <span class="text-[14.5px] leading-relaxed font-light text-[#8a8275]">{{ item.value }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{# ── УСЛОВИЯ ОТМЕНЫ ──────────────────────────────────────── #}
+{% if page.cancel_policy %}
+<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)] bg-[#EFEAE0]">
+  <div class="max-w-[900px] mx-auto">
+    <div class="mb-[clamp(30px,4vw,48px)]">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Политика отмены</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(24px,3.2vw,42px)]">Условия возврата</h2>
+    </div>
+    <div class="rounded-2xl overflow-hidden border border-bamboo-line">
+      {% for item in page.cancel_policy %}
+        {% with item.value as cp %}
+        <div class="grid grid-cols-[minmax(140px,0.7fr)_1fr_auto] gap-4 items-center
+                    px-6 py-5 border-b border-bamboo-line last:border-0 bg-rice">
+          <div class="font-serif text-[18px] text-moss">{{ cp.period }}</div>
+          <div class="text-[13.5px] font-light text-muted">{{ cp.description }}</div>
+          <div class="font-serif text-[22px] text-right
+                      {% if cp.refund_percent == 100 %}text-[#4d7a5a]
+                      {% elif cp.refund_percent >= 50 %}text-[#c4872a]
+                      {% else %}text-terracotta-dark{% endif %}">
+            {{ cp.refund_percent }}%
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+    <p class="mt-5 text-[13px] font-light text-muted-2 leading-relaxed">
+      При форс-мажоре (стихийные бедствия, закрытие границ) возврат — 100% независимо от срока.
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{# ── ФИНАЛЬНЫЙ CTA ───────────────────────────────────────── #}
+<section class="py-[clamp(80px,14vh,160px)] px-[clamp(20px,6vw,96px)]
+                text-center border-t border-bamboo-line">
+  <div class="max-w-[720px] mx-auto">
+    <h2 class="m-0 font-serif font-medium text-[clamp(30px,4.8vw,60px)] leading-[1.12] text-balance">
+      Готовы почувствовать настоящую Азию?
+    </h2>
+    <a href="#booking"
+       class="mt-9 inline-flex items-center gap-3 px-11 py-[18px] bg-terracotta text-rice
+              no-underline rounded-full text-[13px] tracking-[0.18em] uppercase
+              hover:bg-terracotta-dark transition-colors duration-300">
+      Выбрать дату
+    </a>
+  </div>
+</section>
+
+</div>{# end x-data="tourPage()" #}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('alpine:init', () => {
+  const dates = [
+    {% for d in page.tour_dates.all %}
+    {
+      label: '{{ d.start_date|date:"j M" }} — {{ d.end_date|date:"j M" }}',
+      price: '${{ d.price }}',
+      spots: {{ d.spots_left }},
+    },
+    {% endfor %}
+  ];
+
+  Alpine.data('tourPage', () => ({
+    active: 0,
+    dateIdx: 0,
+    autoTimer: null,
+    init() {
+      const total = {{ page.hero_images|length }};
+      if (total > 1) {
+        this.autoTimer = setInterval(() => {
+          this.active = (this.active + 1) % total;
+        }, 6000);
+      }
+    },
+    setSlide(i) {
+      this.active = i;
+      clearInterval(this.autoTimer);
+      const total = {{ page.hero_images|length }};
+      this.autoTimer = setInterval(() => {
+        this.active = (this.active + 1) % total;
+      }, 6000);
+    },
+    selectDate(i) { this.dateIdx = i; },
+    get selectedLabel() { return dates[this.dateIdx]?.label || '—'; },
+    get selectedPrice() { return dates[this.dateIdx]?.price || '—'; },
+    get selectedSpots() { return dates[this.dateIdx]?.spots ?? 0; },
+    get bookingUrl() {
+      const base = '{% slugurl "contact" %}';
+      const tour = encodeURIComponent('{{ page.title|escapejs }}');
+      const date = encodeURIComponent(dates[this.dateIdx]?.label || '');
+      return base + '?tour=' + tour + '&date=' + date;
+    },
+  }));
+});
+</script>
+{% endblock %}

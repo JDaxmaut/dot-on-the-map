@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ page.seo_title|default:page.title }} — Точка на карте{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ page.search_description|default:"Авторские туры по Азии. Небольшие группы, настоящие маршруты." }}{% endblock %}">
+
+  {% load static wagtailcore_tags %}
+  {% slugurl 'privacy' as privacyurl %}
+
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+  {# Built Tailwind CSS — 30KB vs 350KB CDN JS #}
+  <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+
+  {# Fonts — async, display=swap already in URL #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap">
+  </noscript>
+
+  {# Alpine Collapse plugin must load before Alpine core #}
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-rice text-moss font-sans font-light antialiased overflow-x-hidden">
+
+  {# ── HEADER + MOBILE MENU — единый Alpine scope ──────────── #}
+  <div x-data="navBar({{ page.specific.hero_nav|yesno:'false,true' }})" x-init="init()">
+
+    <header class="fixed top-0 left-0 right-0 z-[100] h-[74px] flex items-center justify-between
+                   px-[clamp(20px,4vw,56px)] transition-[background-color,color,box-shadow,backdrop-filter] duration-500"
+            :class="scrolled
+              ? 'bg-rice/90 text-moss shadow-[0_1px_0_rgba(44,62,45,0.09)] backdrop-blur-md'
+              : 'bg-transparent text-rice'">
+
+      <nav class="hidden lg:flex gap-8 items-center flex-1 text-[12.5px] tracking-[0.14em] uppercase">
+        <a href="/" class="opacity-80 hover:opacity-100 transition-opacity no-underline">Главная</a>
+        <a href="{% slugurl 'catalog' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">Туры</a>
+      </nav>
+
+      <a href="/"
+         class="font-serif font-medium text-[clamp(18px,4.6vw,23px)] tracking-[0.16em]
+                flex-shrink-0 whitespace-nowrap no-underline">
+        Точка на карте
+      </a>
+
+      <nav class="hidden lg:flex gap-8 items-center justify-end flex-1 text-[12.5px] tracking-[0.14em] uppercase">
+        <a href="{% slugurl 'about' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">О нас</a>
+        <a href="{% slugurl 'contact' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">Контакты</a>
+      </nav>
+
+      <button @click="open = true"
+              class="lg:hidden ml-auto p-2 bg-transparent border-0 cursor-pointer"
+              aria-label="Меню">
+        <svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M0 1h26M0 13h26"/>
+        </svg>
+      </button>
+    </header>
+
+    <div x-show="open"
+         x-transition:enter="transition duration-500"
+         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition duration-300"
+         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[120] bg-moss text-rice flex flex-col items-center justify-center gap-7"
+         style="display:none">
+      <button @click="open = false"
+              class="absolute top-6 right-6 bg-transparent border-0 text-rice p-2 cursor-pointer"
+              aria-label="Закрыть">
+        <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M4 4l16 16M20 4L4 20"/>
+        </svg>
+      </button>
+      <a @click="open=false" href="/" class="font-serif text-[32px] text-rice no-underline">Главная</a>
+      <a @click="open=false" href="{% slugurl 'catalog' %}" class="font-serif text-[32px] text-terracotta no-underline">Туры</a>
+      <a @click="open=false" href="{% slugurl 'about' %}" class="font-serif text-[32px] text-rice no-underline">О нас</a>
+      <a @click="open=false" href="{% slugurl 'contact' %}" class="font-serif text-[32px] text-rice no-underline">Контакты</a>
+    </div>
+
+  </div>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  {% include "includes/footer.html" %}
+
+  {# ── COOKIE CONSENT BANNER ───────────────────────────────── #}
+  <div x-data="cookieBanner()"
+       x-show="show"
+       x-transition:enter="transition duration-500"
+       x-transition:enter-start="opacity-0 translate-y-4"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition duration-300"
+       x-transition:leave-start="opacity-100 translate-y-0"
+       x-transition:leave-end="opacity-0 translate-y-4"
+       class="fixed bottom-5 left-[clamp(12px,3vw,32px)] right-[clamp(12px,3vw,32px)] z-[200]
+              max-w-[680px] mx-auto
+              bg-moss text-rice rounded-2xl
+              px-[clamp(20px,4vw,36px)] py-5
+              shadow-[0_8px_40px_rgba(44,62,45,0.28)]
+              flex flex-col sm:flex-row items-start sm:items-center gap-4"
+       style="display:none"
+       role="region"
+       aria-label="Уведомление о cookies">
+    <p class="m-0 flex-1 text-[13px] font-light leading-relaxed text-rice/85">
+      Мы используем cookies для аналитики и улучшения сайта. Подробнее —
+      <a href="{{ privacyurl|default:'/privacy/' }}" class="text-terracotta hover:text-rice transition-colors">политика конфиденциальности</a>.
+    </p>
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <button @click="accept()"
+              class="bg-terracotta text-rice border-0 rounded-full px-6 py-2.5
+                     text-[11.5px] tracking-[0.14em] uppercase cursor-pointer
+                     hover:bg-terracotta-dark transition-colors font-sans whitespace-nowrap">
+        Принять
+      </button>
+      <button @click="decline()"
+              class="bg-transparent text-rice/60 border-0 rounded-full px-4 py-2.5
+                     text-[11.5px] tracking-[0.14em] uppercase cursor-pointer
+                     hover:text-rice transition-colors font-sans whitespace-nowrap">
+        Только необходимые
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 0.95 });
+      function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    });
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('cookieBanner', () => ({
+        show: false,
+        init() {
+          this.show = !document.cookie.split(';').some(
+            c => c.trim().startsWith('cookie_consent=')
+          );
+        },
+        accept() {
+          const exp = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+          document.cookie = 'cookie_consent=all;expires=' + exp + ';path=/;SameSite=Lax';
+          this.show = false;
+        },
+        decline() {
+          const exp = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+          document.cookie = 'cookie_consent=minimal;expires=' + exp + ';path=/;SameSite=Lax';
+          this.show = false;
+        },
+      }));
+
+      Alpine.data('navBar', (startScrolled = false) => ({
+        scrolled: startScrolled,
+        open: false,
+        init() {
+          if (startScrolled) return;
+          const sentinel = document.createElement('div');
+          sentinel.style.cssText = 'position:absolute;top:60px;left:0;width:1px;height:1px;pointer-events:none;';
+          document.body.prepend(sentinel);
+          const obs = new IntersectionObserver(([e]) => {
+            this.scrolled = !e.isIntersecting;
+          });
+          obs.observe(sentinel);
+          this.$cleanup(() => { obs.disconnect(); sentinel.remove(); });
+        },
+      }));
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
