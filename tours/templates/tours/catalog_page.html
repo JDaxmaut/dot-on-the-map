@@ -198,44 +198,41 @@
          class="flex items-center justify-center gap-1 mt-[clamp(40px,6vh,64px)]"
          style="display:none">
 
-      <a href="#tours-grid"
-         @click="page <= 1 ? $event.preventDefault() : goPage(page - 1)"
-         :class="page <= 1
-           ? 'opacity-30 pointer-events-none border-bamboo-line text-muted-2'
-           : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta'"
-         class="w-9 h-9 flex items-center justify-center rounded-full border
-                bg-transparent transition-all font-sans no-underline">
+      <button @click="goPage(page - 1)" :disabled="page <= 1"
+              :class="page <= 1
+                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
+                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
+              class="w-9 h-9 flex items-center justify-center rounded-full border
+                     bg-transparent transition-all font-sans">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </a>
+      </button>
 
       <template x-for="(item, i) in pageItems" :key="i">
         <span class="inline-flex items-center">
           <span x-show="item === 0"
                 class="w-6 text-center text-[13px] text-muted-2 select-none">…</span>
-          <a x-show="item > 0"
-             href="#tours-grid"
-             @click="goPage(item)"
-             x-text="item"
-             :class="page === item
-               ? 'bg-terracotta text-rice border-terracotta'
-               : 'bg-transparent text-muted border-bamboo-line hover:border-terracotta hover:text-terracotta'"
-             class="w-9 h-9 rounded-full border text-[13px] font-sans no-underline
-                    transition-all cursor-pointer flex items-center justify-center">
-          </a>
+          <button x-show="item > 0"
+                  @click="goPage(item)"
+                  x-text="item"
+                  :class="page === item
+                    ? 'bg-terracotta text-rice border-terracotta'
+                    : 'bg-transparent text-muted border-bamboo-line hover:border-terracotta hover:text-terracotta'"
+                  class="w-9 h-9 rounded-full border text-[13px] font-sans
+                         transition-all cursor-pointer">
+          </button>
         </span>
       </template>
 
-      <a href="#tours-grid"
-         @click="page >= totalPages ? $event.preventDefault() : goPage(page + 1)"
-         :class="page >= totalPages
-           ? 'opacity-30 pointer-events-none border-bamboo-line text-muted-2'
-           : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta'"
-         class="w-9 h-9 flex items-center justify-center rounded-full border
-                bg-transparent transition-all font-sans no-underline">
+      <button @click="goPage(page + 1)" :disabled="page >= totalPages"
+              :class="page >= totalPages
+                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
+                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
+              class="w-9 h-9 flex items-center justify-center rounded-full border
+                     bg-transparent transition-all font-sans">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </a>
+      </button>
 
     </div>
 
@@ -322,6 +319,7 @@ document.addEventListener('alpine:init', () => {
     goPage(n) {
       if (n < 1 || n > this._pages) return;
       this.page = n;
+      document.getElementById('tours-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     get totalPages() { return this._pages; },
