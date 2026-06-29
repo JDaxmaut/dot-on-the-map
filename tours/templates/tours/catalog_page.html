@@ -121,7 +121,7 @@
 {# ── TOURS GRID ──────────────────────────────────────────── #}
 <section class="px-[clamp(20px,6vw,96px)] py-[clamp(32px,5vh,56px)] pb-[clamp(80px,13vh,140px)]">
   <div class="max-w-[1320px] mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-[clamp(20px,2.8vw,38px)] gap-y-[clamp(28px,3.5vw,52px)]"
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-[clamp(20px,2.8vw,38px)] gap-y-[clamp(28px,3.5vw,52px)] scroll-mt-[140px]"
          id="tours-grid">
       {% for tour in tours %}
       <a href="{% pageurl tour %}"
@@ -198,41 +198,44 @@
          class="flex items-center justify-center gap-1 mt-[clamp(40px,6vh,64px)]"
          style="display:none">
 
-      <button @click="goPage(page - 1)" :disabled="page <= 1"
-              :class="page <= 1
-                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
-                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
-              class="w-9 h-9 flex items-center justify-center rounded-full border
-                     bg-transparent transition-all font-sans">
+      <a href="#tours-grid"
+         @click="page <= 1 ? $event.preventDefault() : goPage(page - 1)"
+         :class="page <= 1
+           ? 'opacity-30 pointer-events-none border-bamboo-line text-muted-2'
+           : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta'"
+         class="w-9 h-9 flex items-center justify-center rounded-full border
+                bg-transparent transition-all font-sans no-underline">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
+      </a>
 
       <template x-for="(item, i) in pageItems" :key="i">
         <span class="inline-flex items-center">
           <span x-show="item === 0"
                 class="w-6 text-center text-[13px] text-muted-2 select-none">…</span>
-          <button x-show="item > 0"
-                  @click="goPage(item)"
-                  x-text="item"
-                  :class="page === item
-                    ? 'bg-terracotta text-rice border-terracotta'
-                    : 'bg-transparent text-muted border-bamboo-line hover:border-terracotta hover:text-terracotta'"
-                  class="w-9 h-9 rounded-full border text-[13px] font-sans
-                         transition-all cursor-pointer">
-          </button>
+          <a x-show="item > 0"
+             href="#tours-grid"
+             @click="goPage(item)"
+             x-text="item"
+             :class="page === item
+               ? 'bg-terracotta text-rice border-terracotta'
+               : 'bg-transparent text-muted border-bamboo-line hover:border-terracotta hover:text-terracotta'"
+             class="w-9 h-9 rounded-full border text-[13px] font-sans no-underline
+                    transition-all cursor-pointer flex items-center justify-center">
+          </a>
         </span>
       </template>
 
-      <button @click="goPage(page + 1)" :disabled="page >= totalPages"
-              :class="page >= totalPages
-                ? 'opacity-30 cursor-not-allowed border-bamboo-line text-muted-2'
-                : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta cursor-pointer'"
-              class="w-9 h-9 flex items-center justify-center rounded-full border
-                     bg-transparent transition-all font-sans">
+      <a href="#tours-grid"
+         @click="page >= totalPages ? $event.preventDefault() : goPage(page + 1)"
+         :class="page >= totalPages
+           ? 'opacity-30 pointer-events-none border-bamboo-line text-muted-2'
+           : 'border-bamboo-line text-muted hover:border-terracotta hover:text-terracotta'"
+         class="w-9 h-9 flex items-center justify-center rounded-full border
+                bg-transparent transition-all font-sans no-underline">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
+      </a>
 
     </div>
 
@@ -319,8 +322,6 @@ document.addEventListener('alpine:init', () => {
     goPage(n) {
       if (n < 1 || n > this._pages) return;
       this.page = n;
-      const grid = document.getElementById('tours-grid');
-      if (grid) window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 140, behavior: 'smooth' });
     },
 
     get totalPages() { return this._pages; },
