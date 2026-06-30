@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 from wagtail.models import Page, Orderable
 from wagtail.fields import StreamField, RichTextField
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.admin.panels import (
+    FieldPanel, MultiFieldPanel, InlinePanel,
+    TabbedInterface, ObjectList,
+)
 from wagtail.images import get_image_model_string
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail import blocks as wt_blocks
@@ -223,57 +226,67 @@ class TourPage(Page, ClusterableModel):
         default="Выбрать дату",
     )
 
-    content_panels = Page.content_panels + [
+    edit_handler = TabbedInterface([
 
-        MultiFieldPanel([
+        ObjectList([
+            FieldPanel("title"),
+            MultiFieldPanel([
+                FieldPanel("location"),
+                FieldPanel("country_tag"),
+                FieldPanel("tags"),
+            ], heading="Локация и теги"),
+            MultiFieldPanel([
+                FieldPanel("summary"),
+                FieldPanel("description"),
+                FieldPanel("highlights"),
+            ], heading="Текст"),
+        ], heading="Основное"),
+
+        ObjectList([
+            MultiFieldPanel([
+                FieldPanel("duration"),
+                FieldPanel("group_size"),
+                FieldPanel("group_size_max"),
+                FieldPanel("comfort"),
+                FieldPanel("difficulty"),
+                FieldPanel("price_from"),
+            ], heading="Характеристики"),
+            InlinePanel("tour_dates", label="Заезд"),
+        ], heading="Параметры и даты"),
+
+        ObjectList([
+            FieldPanel("itinerary"),
+        ], heading="Программа по дням"),
+
+        ObjectList([
             FieldPanel("hero_images"),
-        ], heading="Главная галерея (hero, 3–5 фото)"),
+            InlinePanel("gallery_images", label="Фото", max_num=10),
+        ], heading="Фотографии"),
 
-        MultiFieldPanel([
-            FieldPanel("location"),
-            FieldPanel("country_tag"),
-            FieldPanel("summary"),
-            FieldPanel("description"),
-            FieldPanel("highlights"),
-            FieldPanel("tags"),
-        ], heading="Описание тура"),
+        ObjectList([
+            FieldPanel("accommodation"),
+        ], heading="Проживание"),
 
-        MultiFieldPanel([
-            FieldPanel("duration"),
-            FieldPanel("group_size"),
-            FieldPanel("group_size_max"),
-            FieldPanel("comfort"),
-            FieldPanel("difficulty"),
-            FieldPanel("price_from"),
-        ], heading="Параметры тура"),
+        ObjectList([
+            MultiFieldPanel([
+                FieldPanel("included"),
+                FieldPanel("excluded"),
+            ], heading="Включено / не включено"),
+            FieldPanel("what_to_bring"),
+        ], heading="Включено"),
 
-        InlinePanel("tour_dates", label="Даты и цены заездов"),
+        ObjectList([
+            FieldPanel("faq"),
+        ], heading="FAQ"),
 
-        FieldPanel("itinerary"),
+        ObjectList([
+            MultiFieldPanel([
+                FieldPanel("cta_heading"),
+                FieldPanel("cta_button"),
+            ], heading="Призыв к действию"),
+        ], heading="Настройки"),
 
-        InlinePanel("gallery_images", label="Галерея тура (до 10 фото)", max_num=10),
-
-        FieldPanel("accommodation"),
-
-        FieldPanel("what_to_bring"),
-
-        MultiFieldPanel([
-            FieldPanel("included"),
-            FieldPanel("excluded"),
-        ], heading="Включено / не включено"),
-
-        FieldPanel("faq"),
-
-        MultiFieldPanel([
-            FieldPanel("cancel_policy"),
-            FieldPanel("force_majeure_note"),
-        ], heading="Политика отмены"),
-
-        MultiFieldPanel([
-            FieldPanel("cta_heading"),
-            FieldPanel("cta_button"),
-        ], heading="Финальный призыв к действию"),
-    ]
+    ])
 
     parent_page_types = ["tours.CatalogPage"]
 
