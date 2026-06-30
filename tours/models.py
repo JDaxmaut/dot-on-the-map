@@ -288,6 +288,12 @@ class TourPage(Page, ClusterableModel):
 
     ])
 
+    @property
+    def hero_first_image(self):
+        for block in self.hero_images:
+            return block.value
+        return None
+
     parent_page_types = ["tours.CatalogPage"]
 
 
