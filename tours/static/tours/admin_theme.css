@@ -323,3 +323,108 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
   border-radius: 8px !important;
   color: #ddd8cc !important;
 }
+
+/* ── Контраст: коричневый/тёмный текст → светлый ─────────────── */
+
+/* Wagtail использует эти переменные для меток и мета-текста */
+:root {
+  --w-color-text-default:    #ddd8cc;
+  --w-color-text-label:      #b0bba8;
+  --w-color-text-meta:       #8a9a82;
+  --w-color-text-placeholder:#5a6a54;
+  --w-color-text-button:     #ddd8cc;
+  --w-color-text-link-default: #C86B49;
+  --w-color-text-link-hover:   #e08060;
+  --w-color-border-field-default: rgba(255,255,255,0.14);
+  --w-color-border-furniture:     rgba(255,255,255,0.07);
+  --w-color-surface-field-inactive: #1a2219;
+  --w-color-surface-tooltip: #2a3429;
+  --w-color-text-highlight-on-dark: #ddd8cc;
+}
+
+/* Любые «коричневые» и «серые» wagtail-классы */
+.w-text-primary,
+.w-color-text-label,
+[class*="text-w-color"] { color: #ddd8cc !important; }
+
+/* Заголовки секций и лейблы панелей */
+h2, h3, h4,
+.w-panel__heading-text,
+.collapsible-panel__heading,
+legend, fieldset > legend {
+  color: #ddd8cc !important;
+}
+
+/* Inline-описания блоков StreamField */
+.c-sf-block__header__title,
+.c-sf-block__type,
+[data-block-key] label,
+.struct-block > .field > label {
+  color: #b0bba8 !important;
+}
+
+/* Мета-инфо под полями (количество символов, подсказки) */
+.field-comment,
+.character-count,
+.help,
+p.help,
+.w-field__help {
+  color: rgba(176,187,168,0.7) !important;
+}
+
+/* Хлебные крошки внутри редактора */
+.w-breadcrumb__item,
+.w-breadcrumb__link {
+  color: rgba(221,216,204,0.7) !important;
+}
+.w-breadcrumb__item:last-child,
+.w-breadcrumb__link:last-child {
+  color: #ddd8cc !important;
+}
+
+/* Статус-бар (Draft / Live) */
+.w-status-tag,
+.status-tag {
+  background: rgba(255,255,255,0.08) !important;
+  color: #b0bba8 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+.w-status-tag--live,
+.status-tag.live {
+  background: rgba(44,62,45,0.5) !important;
+  color: #8ec48e !important;
+  border-color: rgba(142,196,142,0.2) !important;
+}
+
+/* Кнопка «...» меню действий */
+.w-action-menu__toggle,
+.actions .button,
+.dropdown-toggle {
+  color: #b0bba8 !important;
+}
+.w-action-menu__toggle:hover { color: #ddd8cc !important; }
+
+/* Тултипы */
+[data-tippy-content],
+.tippy-box {
+  background: #2a3429 !important;
+  color: #ddd8cc !important;
+}
+
+/* Счётчики страниц в пагинации */
+.pagination .page-number,
+.w-pagination__label {
+  color: #b0bba8 !important;
+}
+
+/* Текст в chooser-модалках */
+.modal-body p,
+.modal-body label,
+.modal-body th {
+  color: #ddd8cc !important;
+}
+.modal-body td { color: rgba(221,216,204,0.8) !important; }
+
+/* Иконки в таблицах */
+.icon { fill: currentColor; }
+.icon-grey, .icon.icon-grey { fill: #8a9a82 !important; }
