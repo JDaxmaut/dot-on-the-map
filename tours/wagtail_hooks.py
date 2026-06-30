@@ -137,7 +137,7 @@ def add_open_button(buttons, page, user, context=None):
     if isinstance(page, TourPage) and page.live:
         buttons.append(PageListingButton(
             "Открыть",
-            page.full_url,
+            page.url,
             attrs={"target": "_blank", "rel": "noopener"},
             priority=20,
         ))
