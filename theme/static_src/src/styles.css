@@ -8,12 +8,7 @@
     color: #F4F1EA;
   }
 
-  @keyframes kenburns {
-    from { transform: scale(1); }
-    to   { transform: scale(1.08); }
-  }
-
-  @keyframes arrow {
+@keyframes arrow {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(6px); }
   }
