@@ -76,19 +76,23 @@
   </div>
 
   {% if page.hero_images %}
-  <div class="absolute bottom-7 left-0 right-0 flex justify-center gap-2.5 px-5">
-    {% for item in page.hero_images %}
-      {% with item.value as img %}
-        {% image img fill-200x140 format-webp as thumb %}
-        <button @click="setSlide({{ forloop.counter0 }})"
-                class="w-[clamp(54px,7.5vw,84px)] h-[clamp(38px,5vw,54px)] border-0 p-0
-                       rounded-[8px] overflow-hidden bg-moss cursor-pointer transition-all duration-300"
-                :class="active === {{ forloop.counter0 }}
-                  ? 'opacity-100 ring-2 ring-terracotta' : 'opacity-50 hover:opacity-85'">
-          <img src="{{ thumb.url }}" alt="" class="w-full h-full object-cover">
-        </button>
-      {% endwith %}
-    {% endfor %}
+  <div class="absolute bottom-7 left-0 right-0 px-4 flex justify-center">
+    <div class="flex gap-2 overflow-x-auto max-w-full"
+         style="scrollbar-width:none;-ms-overflow-style:none">
+      <style>.thumb-strip::-webkit-scrollbar{display:none}</style>
+      {% for item in page.hero_images %}
+        {% with item.value as img %}
+          {% image img fill-200x140 format-webp as thumb %}
+          <button @click="setSlide({{ forloop.counter0 }})"
+                  class="flex-shrink-0 w-14 h-10 sm:w-[clamp(54px,7.5vw,84px)] sm:h-[clamp(38px,5vw,54px)]
+                         border-0 p-0 rounded-[6px] overflow-hidden bg-moss cursor-pointer transition-all duration-300"
+                  :class="active === {{ forloop.counter0 }}
+                    ? 'opacity-100 ring-2 ring-terracotta' : 'opacity-50 hover:opacity-85'">
+            <img src="{{ thumb.url }}" alt="" class="w-full h-full object-cover">
+          </button>
+        {% endwith %}
+      {% endfor %}
+    </div>
   </div>
   {% endif %}
 </section>
