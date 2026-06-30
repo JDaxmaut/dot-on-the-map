@@ -120,6 +120,9 @@ WAGTAIL_SITE_NAME = "Точка на карте"
 WAGTAILADMIN_BASE_URL = "http://localhost:8000"
 WAGTAIL_I18N_ENABLED = False
 
+from PIL import ImageFile as _PILImageFile
+_PILImageFile.LOAD_TRUNCATED_IMAGES = True
+
 WAGTAILIMAGES_FORMAT_CONVERSIONS = {
     "jpeg": "webp",
     "jpg": "webp",
