@@ -1,0 +1,209 @@
+/* ── Точка на карте — Wagtail Admin Theme ────────────────────── */
+
+/* ── CSS-переменные ─────────────────────────────────────────── */
+:root {
+  /* Primary = moss green */
+  --w-color-primary:        #2C3E2D;
+  --w-color-primary-200:    #3a5240;
+  --w-color-primary-300:    #3a5240;
+  --w-color-primary-400:    #476650;
+  --w-color-primary-600:    #1e2c1f;
+  --w-color-primary-800:    #141e15;
+
+  /* Secondary / accent = terracotta */
+  --w-color-secondary:      #C86B49;
+  --w-color-secondary-50:   #fdf1ec;
+  --w-color-secondary-100:  #f5e0d5;
+  --w-color-secondary-400:  #C86B49;
+  --w-color-secondary-600:  #a5522e;
+  --w-color-secondary-800:  #7a3a1e;
+
+  /* Focus ring */
+  --w-color-focus:          #C86B49;
+
+  /* Sidebar text */
+  --w-color-surface-page:   #F4F1EA;
+}
+
+/* ── Сайдбар ────────────────────────────────────────────────── */
+.sidebar {
+  background: #2C3E2D !important;
+  border-right: none !important;
+}
+
+.sidebar__inner {
+  background: #2C3E2D !important;
+}
+
+/* логотип / название */
+.sidebar-logo,
+.sidebar-logo svg,
+.w-slim-header__title {
+  color: #F4F1EA !important;
+  fill: #F4F1EA !important;
+}
+
+/* пункты меню */
+.sidebar-menu-item__link,
+.sidebar-sub-menu-item__link {
+  color: rgba(244,241,234,0.75) !important;
+  border-radius: 8px !important;
+}
+
+.sidebar-menu-item__link:hover,
+.sidebar-sub-menu-item__link:hover {
+  background: rgba(244,241,234,0.1) !important;
+  color: #F4F1EA !important;
+}
+
+/* активный пункт */
+.sidebar-menu-item--active .sidebar-menu-item__link,
+.sidebar-sub-menu-item--active .sidebar-sub-menu-item__link {
+  background: rgba(200,107,73,0.18) !important;
+  color: #C86B49 !important;
+}
+
+/* иконки меню */
+.sidebar-menu-item__icon,
+.sidebar-sub-menu-item__icon {
+  color: inherit !important;
+  fill: currentColor !important;
+}
+
+/* кнопка свернуть сайдбар */
+.sidebar-toggle,
+.sidebar__collapse-toggle {
+  color: rgba(244,241,234,0.6) !important;
+}
+.sidebar-toggle:hover,
+.sidebar__collapse-toggle:hover {
+  color: #F4F1EA !important;
+}
+
+/* ── Шапка страницы ─────────────────────────────────────────── */
+.w-slim-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e8e4da !important;
+}
+
+header.w-slim-header .breadcrumb a,
+header.w-slim-header .breadcrumb span {
+  color: #2C3E2D !important;
+}
+
+/* ── Кнопки ─────────────────────────────────────────────────── */
+.button.button-primary,
+button.button-primary,
+input[type=submit].button-primary,
+a.button.button-primary {
+  background: #C86B49 !important;
+  border-color: #C86B49 !important;
+  color: #F4F1EA !important;
+  border-radius: 8px !important;
+}
+
+.button.button-primary:hover,
+button.button-primary:hover {
+  background: #a5522e !important;
+  border-color: #a5522e !important;
+}
+
+.button:not(.button-primary):not(.no):not([class*=button-secondary]) {
+  border-radius: 8px !important;
+}
+
+/* «Опубликовать» */
+.action-save, [data-action-save] {
+  background: #C86B49 !important;
+  border-color: #C86B49 !important;
+  border-radius: 8px !important;
+}
+.action-save:hover {
+  background: #a5522e !important;
+  border-color: #a5522e !important;
+}
+
+/* ── Ссылки и акценты ───────────────────────────────────────── */
+a:not(.button):not(.sidebar-menu-item__link):not(.sidebar-sub-menu-item__link) {
+  color: #2C3E2D;
+}
+
+a:not(.button):hover {
+  color: #C86B49;
+}
+
+/* активные табы */
+[role=tab][aria-selected=true],
+.tab-nav__tab--active {
+  border-bottom-color: #C86B49 !important;
+  color: #C86B49 !important;
+}
+
+/* ── Поля ввода ─────────────────────────────────────────────── */
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+textarea:focus,
+select:focus,
+.halloeditor:focus {
+  border-color: #C86B49 !important;
+  outline-color: #C86B49 !important;
+  box-shadow: 0 0 0 2px rgba(200,107,73,0.15) !important;
+}
+
+/* ── Вкладки редактора тура ─────────────────────────────────── */
+.tab-content__list {
+  border-bottom: 2px solid #e8e4da !important;
+}
+
+/* ── Чекбоксы / переключатели ───────────────────────────────── */
+input[type=checkbox]:checked {
+  accent-color: #C86B49;
+}
+
+/* ── Бейджи и лейблы ────────────────────────────────────────── */
+.status-tag,
+.tag {
+  background: rgba(44,62,45,0.08) !important;
+  color: #2C3E2D !important;
+  border-radius: 6px !important;
+}
+
+/* ── Уведомления / тосты ────────────────────────────────────── */
+.messages .success {
+  background: #2C3E2D !important;
+  color: #F4F1EA !important;
+}
+
+/* ── Общие скругления и типографика ─────────────────────────── */
+.w-panel,
+.panel,
+.object {
+  border-radius: 12px !important;
+  border-color: #e8e4da !important;
+}
+
+.w-panel__heading,
+.panel-heading {
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* ── Дашборд ─────────────────────────────────────────────────── */
+.summary-items .summary-item {
+  border-radius: 12px !important;
+  border-color: #e8e4da !important;
+}
+
+.summary-item .summary-item__title {
+  color: #2C3E2D !important;
+}
+
+.summary-item .summary-item__count {
+  color: #C86B49 !important;
+}
+
+/* ── Поиск ────────────────────────────────────────────────────── */
+.sidebar-search__input:focus {
+  border-color: #C86B49 !important;
+  box-shadow: 0 0 0 2px rgba(200,107,73,0.2) !important;
+}

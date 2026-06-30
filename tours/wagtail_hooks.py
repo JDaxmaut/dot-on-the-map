@@ -1,5 +1,12 @@
 from wagtail import hooks
-from wagtail.admin.ui.components import Component
+from django.templatetags.static import static
+from django.utils.html import format_html
+
+
+# ── Кастомная тема ────────────────────────────────────────────
+@hooks.register("insert_global_admin_css")
+def admin_custom_css():
+    return format_html('<link rel="stylesheet" href="{}?v=1">', static("tours/admin_theme.css"))
 
 
 # ── Убираем лишние панели с главной дашборда ──────────────────
