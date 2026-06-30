@@ -38,7 +38,7 @@
       {% image img fill-1920x1080 format-webp as slide %}
       <img src="{{ slide.url }}" alt="{{ page.title }}"
            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1100ms]"
+           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1100ms] {% if not forloop.first %}opacity-0{% endif %}"
            :class="active === {{ forloop.counter0 }} ? 'opacity-100' : 'opacity-0'">
     {% endwith %}
   {% empty %}
