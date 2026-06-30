@@ -123,6 +123,7 @@ WAGTAIL_I18N_ENABLED = False
 from PIL import ImageFile as _PILImageFile
 _PILImageFile.LOAD_TRUNCATED_IMAGES = True
 
+WAGTAILIMAGES_WEBP_QUALITY = 82
 WAGTAILIMAGES_FORMAT_CONVERSIONS = {
     "jpeg": "webp",
     "jpg": "webp",
