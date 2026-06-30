@@ -1,100 +1,220 @@
-/* ── Точка на карте — Wagtail Admin Theme ────────────────────── */
+/* ── Точка на карте — Dark Admin Theme ──────────────────────── */
 
 /* ── CSS-переменные ─────────────────────────────────────────── */
 :root {
-  /* Primary = moss green */
-  --w-color-primary:        #2C3E2D;
-  --w-color-primary-200:    #3a5240;
-  --w-color-primary-300:    #3a5240;
-  --w-color-primary-400:    #476650;
-  --w-color-primary-600:    #1e2c1f;
-  --w-color-primary-800:    #141e15;
+  --w-color-primary:        #1e2820;
+  --w-color-primary-200:    #2a3829;
+  --w-color-primary-300:    #2a3829;
+  --w-color-primary-400:    #3a5240;
+  --w-color-primary-600:    #141c14;
+  --w-color-primary-800:    #0e140e;
 
-  /* Secondary / accent = terracotta */
   --w-color-secondary:      #C86B49;
-  --w-color-secondary-50:   #fdf1ec;
-  --w-color-secondary-100:  #f5e0d5;
+  --w-color-secondary-50:   rgba(200,107,73,0.1);
+  --w-color-secondary-100:  rgba(200,107,73,0.18);
   --w-color-secondary-400:  #C86B49;
   --w-color-secondary-600:  #a5522e;
   --w-color-secondary-800:  #7a3a1e;
 
-  /* Focus ring */
   --w-color-focus:          #C86B49;
 
-  /* Sidebar text */
-  --w-color-surface-page:   #F4F1EA;
+  --w-color-surface-page:   #1c2219;
+  --w-color-surface-field:  #242d24;
+  --w-color-text-label:     #a0aa9a;
+  --w-color-text-meta:      #7a877a;
 }
 
-/* ── Сайдбар ────────────────────────────────────────────────── */
-.sidebar {
-  background: #2C3E2D !important;
-  border-right: none !important;
+/* ── Фон страницы ────────────────────────────────────────────── */
+html, body {
+  background: #1c2219 !important;
+  color: #ddd8cc !important;
 }
 
+.content-wrapper,
+main[class],
+.content,
+#main,
+.page-wrapper {
+  background: #1c2219 !important;
+}
+
+/* ── Сайдбар ─────────────────────────────────────────────────── */
+.sidebar,
 .sidebar__inner {
-  background: #2C3E2D !important;
+  background: #141a14 !important;
+  border-right: 1px solid rgba(255,255,255,0.05) !important;
 }
 
-/* логотип / название */
-.sidebar-logo,
-.sidebar-logo svg,
-.w-slim-header__title {
-  color: #F4F1EA !important;
-  fill: #F4F1EA !important;
-}
-
-/* пункты меню */
 .sidebar-menu-item__link,
 .sidebar-sub-menu-item__link {
-  color: rgba(244,241,234,0.75) !important;
+  color: rgba(221,216,204,0.65) !important;
   border-radius: 8px !important;
+  transition: background 0.15s, color 0.15s !important;
 }
 
 .sidebar-menu-item__link:hover,
 .sidebar-sub-menu-item__link:hover {
-  background: rgba(244,241,234,0.1) !important;
-  color: #F4F1EA !important;
+  background: rgba(255,255,255,0.07) !important;
+  color: #ddd8cc !important;
 }
 
-/* активный пункт */
 .sidebar-menu-item--active .sidebar-menu-item__link,
 .sidebar-sub-menu-item--active .sidebar-sub-menu-item__link {
   background: rgba(200,107,73,0.18) !important;
   color: #C86B49 !important;
 }
 
-/* иконки меню */
-.sidebar-menu-item__icon,
-.sidebar-sub-menu-item__icon {
-  color: inherit !important;
-  fill: currentColor !important;
+.sidebar-search input,
+.sidebar-search__input {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #ddd8cc !important;
+  border-radius: 8px !important;
 }
 
-/* кнопка свернуть сайдбар */
-.sidebar-toggle,
-.sidebar__collapse-toggle {
-  color: rgba(244,241,234,0.6) !important;
-}
-.sidebar-toggle:hover,
-.sidebar__collapse-toggle:hover {
-  color: #F4F1EA !important;
+.sidebar-search input::placeholder { color: rgba(221,216,204,0.35) !important; }
+
+/* ── Шапка / breadcrumb ──────────────────────────────────────── */
+.w-slim-header,
+header.w-slim-header {
+  background: #1e2820 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
 }
 
-/* ── Шапка страницы ─────────────────────────────────────────── */
-.w-slim-header {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e8e4da !important;
+.w-slim-header *,
+.breadcrumb a,
+.breadcrumb span,
+.w-slim-header .w-breadcrumb__item {
+  color: #ddd8cc !important;
 }
 
-header.w-slim-header .breadcrumb a,
-header.w-slim-header .breadcrumb span {
-  color: #2C3E2D !important;
+/* ── Панели и карточки ───────────────────────────────────────── */
+.w-panel,
+.panel,
+.object,
+.multiple,
+.field-content .richtext,
+[data-block-key] {
+  background: #242d24 !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  border-radius: 10px !important;
 }
 
-/* ── Кнопки ─────────────────────────────────────────────────── */
+.w-panel__header,
+.w-panel__heading,
+.panel-heading,
+.object > h2,
+.collapsible-panel__heading {
+  background: #1e2820 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  color: #ddd8cc !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.w-panel__content,
+.panel-content {
+  background: #242d24 !important;
+  border-radius: 0 0 10px 10px !important;
+}
+
+/* ── Форм-поля ───────────────────────────────────────────────── */
+.field > label,
+.w-field__label,
+label {
+  color: #a0aa9a !important;
+}
+
+input[type=text],
+input[type=email],
+input[type=url],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=date],
+textarea,
+select {
+  background: #1c2219 !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #ddd8cc !important;
+  border-radius: 8px !important;
+}
+
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=number]:focus,
+input[type=date]:focus,
+textarea:focus,
+select:focus {
+  border-color: #C86B49 !important;
+  box-shadow: 0 0 0 2px rgba(200,107,73,0.2) !important;
+  outline: none !important;
+}
+
+input::placeholder,
+textarea::placeholder { color: rgba(221,216,204,0.3) !important; }
+
+/* ── Help text под полями ────────────────────────────────────── */
+.help,
+.field-comment,
+.help-block,
+p.help {
+  color: rgba(221,216,204,0.45) !important;
+}
+
+/* ── Вкладки редактора ───────────────────────────────────────── */
+.w-tabs__list,
+[role=tablist] {
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  background: transparent !important;
+}
+
+[role=tab] {
+  color: rgba(221,216,204,0.55) !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+[role=tab]:hover { color: #ddd8cc !important; }
+
+[role=tab][aria-selected=true] {
+  color: #C86B49 !important;
+  border-bottom-color: #C86B49 !important;
+}
+
+/* ── Таблицы (списки туров и т.д.) ──────────────────────────── */
+.listing,
+table.listing {
+  background: transparent !important;
+}
+
+.listing thead tr,
+table.listing thead tr {
+  background: #1e2820 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.listing thead th,
+table.listing thead th {
+  color: rgba(221,216,204,0.6) !important;
+}
+
+.listing tbody tr,
+table.listing tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+  color: #ddd8cc !important;
+}
+
+.listing tbody tr:hover,
+table.listing tbody tr:hover {
+  background: rgba(255,255,255,0.04) !important;
+}
+
+.listing td a, table.listing td a { color: #ddd8cc !important; }
+.listing td a:hover, table.listing td a:hover { color: #C86B49 !important; }
+
+/* ── Кнопки ──────────────────────────────────────────────────── */
 .button.button-primary,
 button.button-primary,
-input[type=submit].button-primary,
 a.button.button-primary {
   background: #C86B49 !important;
   border-color: #C86B49 !important;
@@ -102,108 +222,104 @@ a.button.button-primary {
   border-radius: 8px !important;
 }
 
-.button.button-primary:hover,
-button.button-primary:hover {
-  background: #a5522e !important;
-  border-color: #a5522e !important;
-}
+.button.button-primary:hover { background: #a5522e !important; border-color: #a5522e !important; }
 
-.button:not(.button-primary):not(.no):not([class*=button-secondary]) {
+.button:not(.button-primary) {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #ddd8cc !important;
   border-radius: 8px !important;
 }
 
-/* «Опубликовать» */
-.action-save, [data-action-save] {
-  background: #C86B49 !important;
-  border-color: #C86B49 !important;
-  border-radius: 8px !important;
-}
-.action-save:hover {
-  background: #a5522e !important;
-  border-color: #a5522e !important;
+.button:not(.button-primary):hover {
+  background: rgba(255,255,255,0.12) !important;
 }
 
-/* ── Ссылки и акценты ───────────────────────────────────────── */
-a:not(.button):not(.sidebar-menu-item__link):not(.sidebar-sub-menu-item__link) {
-  color: #2C3E2D;
+/* ── Дашборд — статистика ────────────────────────────────────── */
+.summary-item {
+  background: #242d24 !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  border-radius: 10px !important;
 }
 
-a:not(.button):hover {
-  color: #C86B49;
+.summary-item__title { color: rgba(221,216,204,0.6) !important; }
+.summary-item__count { color: #C86B49 !important; }
+
+/* ── Дропдаун / меню действий ────────────────────────────────── */
+.dropdown-menu,
+.w-dropdown__content,
+.chooser__chooser {
+  background: #2a3429 !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
 }
 
-/* активные табы */
-[role=tab][aria-selected=true],
-.tab-nav__tab--active {
-  border-bottom-color: #C86B49 !important;
-  color: #C86B49 !important;
+.dropdown-item,
+.w-dropdown__item {
+  color: #ddd8cc !important;
 }
 
-/* ── Поля ввода ─────────────────────────────────────────────── */
-input[type=text]:focus,
-input[type=email]:focus,
-input[type=url]:focus,
-textarea:focus,
-select:focus,
-.halloeditor:focus {
-  border-color: #C86B49 !important;
-  outline-color: #C86B49 !important;
-  box-shadow: 0 0 0 2px rgba(200,107,73,0.15) !important;
+.dropdown-item:hover,
+.w-dropdown__item:hover {
+  background: rgba(255,255,255,0.07) !important;
+  color: #ddd8cc !important;
 }
 
-/* ── Вкладки редактора тура ─────────────────────────────────── */
-.tab-content__list {
-  border-bottom: 2px solid #e8e4da !important;
+/* ── Модалки / chooser ───────────────────────────────────────── */
+.modal-content,
+.chooser-modal .modal-content {
+  background: #242d24 !important;
+  color: #ddd8cc !important;
+  border-radius: 12px !important;
 }
 
-/* ── Чекбоксы / переключатели ───────────────────────────────── */
-input[type=checkbox]:checked {
-  accent-color: #C86B49;
-}
-
-/* ── Бейджи и лейблы ────────────────────────────────────────── */
-.status-tag,
-.tag {
-  background: rgba(44,62,45,0.08) !important;
-  color: #2C3E2D !important;
-  border-radius: 6px !important;
-}
-
-/* ── Уведомления / тосты ────────────────────────────────────── */
-.messages .success {
+/* ── Нотификации ─────────────────────────────────────────────── */
+.messages .success,
+.w-messages__message--success {
   background: #2C3E2D !important;
   color: #F4F1EA !important;
+  border-left: 3px solid #C86B49 !important;
+  border-radius: 8px !important;
 }
 
-/* ── Общие скругления и типографика ─────────────────────────── */
-.w-panel,
-.panel,
-.object {
-  border-radius: 12px !important;
-  border-color: #e8e4da !important;
+.messages .error,
+.w-messages__message--error {
+  background: #3d1a1a !important;
+  color: #f5a0a0 !important;
+  border-left: 3px solid #e05555 !important;
+  border-radius: 8px !important;
 }
 
-.w-panel__heading,
-.panel-heading {
-  border-radius: 12px 12px 0 0 !important;
+/* ── Разделители, мелочи ─────────────────────────────────────── */
+hr { border-color: rgba(255,255,255,0.07) !important; }
+
+.w-field__errors li { color: #f5a0a0 !important; }
+
+/* StreamField */
+.c-sf-container,
+.c-sf-block {
+  background: #1e2820 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  border-radius: 8px !important;
 }
 
-/* ── Дашборд ─────────────────────────────────────────────────── */
-.summary-items .summary-item {
-  border-radius: 12px !important;
-  border-color: #e8e4da !important;
-}
-
-.summary-item .summary-item__title {
-  color: #2C3E2D !important;
-}
-
-.summary-item .summary-item__count {
+.c-sf-add-button {
+  background: rgba(200,107,73,0.12) !important;
+  border-color: rgba(200,107,73,0.3) !important;
   color: #C86B49 !important;
+  border-radius: 8px !important;
 }
 
-/* ── Поиск ────────────────────────────────────────────────────── */
-.sidebar-search__input:focus {
-  border-color: #C86B49 !important;
-  box-shadow: 0 0 0 2px rgba(200,107,73,0.2) !important;
+.c-sf-add-button:hover {
+  background: rgba(200,107,73,0.22) !important;
+}
+
+/* ── Выбор изображений ───────────────────────────────────────── */
+.image-chooser .chosen,
+.chooser .chosen {
+  background: #1e2820 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  border-radius: 8px !important;
+  color: #ddd8cc !important;
 }
