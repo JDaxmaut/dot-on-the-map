@@ -259,7 +259,9 @@ class TourPage(Page, ClusterableModel):
         ], heading="Программа по дням"),
 
         ObjectList([
-            FieldPanel("hero_images"),
+            FieldPanel("hero_images", help_text="Используйте горизонтальные фото (16:9 или шире). "
+                "Если фото вертикальное — откройте его в разделе «Изображения» и задайте точку фокуса, "
+                "чтобы при обрезке сохранялся нужный фрагмент."),
             InlinePanel("gallery_images", label="Фото", max_num=10),
         ], heading="Фотографии"),
 
