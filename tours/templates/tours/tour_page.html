@@ -341,37 +341,6 @@
 </section>
 {% endif %}
 
-{# ── УСЛОВИЯ ОТМЕНЫ ──────────────────────────────────────── #}
-{% if page.cancel_policy %}
-<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)] bg-[#EFEAE0]">
-  <div class="max-w-[900px] mx-auto">
-    <div class="mb-[clamp(30px,4vw,48px)]">
-      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Политика отмены</div>
-      <h2 class="m-0 font-serif font-medium text-[clamp(24px,3.2vw,42px)]">Условия возврата</h2>
-    </div>
-    <div class="rounded-2xl overflow-hidden border border-bamboo-line">
-      {% for item in page.cancel_policy %}
-        {% with item.value as cp %}
-        <div class="grid grid-cols-[minmax(140px,0.7fr)_1fr_auto] gap-4 items-center
-                    px-6 py-5 border-b border-bamboo-line last:border-0 bg-rice">
-          <div class="font-serif text-[18px] text-moss">{{ cp.period }}</div>
-          <div class="text-[13.5px] font-light text-muted">{{ cp.description }}</div>
-          <div class="font-serif text-[22px] text-right
-                      {% if cp.refund_percent == 100 %}text-[#4d7a5a]
-                      {% elif cp.refund_percent >= 50 %}text-[#c4872a]
-                      {% else %}text-terracotta-dark{% endif %}">
-            {{ cp.refund_percent }}%
-          </div>
-        </div>
-        {% endwith %}
-      {% endfor %}
-    </div>
-    <p class="mt-5 text-[13px] font-light text-muted-2 leading-relaxed">
-      При форс-мажоре (стихийные бедствия, закрытие границ) возврат — 100% независимо от срока.
-    </p>
-  </div>
-</section>
-{% endif %}
 
 {# ── ФИНАЛЬНЫЙ CTA ───────────────────────────────────────── #}
 <section class="py-[clamp(80px,14vh,160px)] px-[clamp(20px,6vw,96px)]
