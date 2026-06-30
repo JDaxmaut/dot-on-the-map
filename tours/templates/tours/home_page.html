@@ -9,14 +9,14 @@
     {% image page.hero_image fill-1920x1080 format-webp as img %}
     <img src="{{ img.url }}" alt="{{ img.alt }}"
          loading="eager" fetchpriority="high" decoding="async"
-         class="absolute inset-0 w-full h-full object-cover"
+         class="absolute inset-0 w-full h-full object-cover">
   {% else %}
     <img src="{% static 'img/hero-hills.webp' %}" alt="" aria-hidden="true"
          loading="eager" fetchpriority="high" decoding="async"
          class="absolute inset-0 w-full h-full object-cover">
   {% endif %}
   <div class="absolute inset-0 pointer-events-none"
-       style="background:linear-gradient(to bottom,rgba(44,62,45,0.42) 0%,rgba(44,62,45,0) 22%),linear-gradient(to top,rgba(44,62,45,0.65) 0%,rgba(44,62,45,0.14) 40%,rgba(44,62,45,0) 68%)">
+       style="background:rgba(44,62,45,0.48)">
   </div>
 
   <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-[0.055]"
