@@ -6,7 +6,7 @@
 {% block content %}
 
 {# ── HERO ────────────────────────────────────────────────────── #}
-<section class="relative h-[52vh] min-h-[380px] overflow-hidden bg-moss">
+<section class="relative h-[52vh] min-h-[380px] overflow-hidden bg-moss rounded-b-[28px]">
   {% if page.hero_image %}
     {% image page.hero_image fill-1920x900 format-webp as hi %}
     <img src="{{ hi.url }}" alt="{{ page.title }}"
@@ -23,7 +23,7 @@
        style="mix-blend-mode:overlay;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.8%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-size:180px 180px">
   </div>
   <div class="absolute bottom-[clamp(36px,6vh,64px)] left-[clamp(20px,6vw,96px)] right-[clamp(20px,6vw,96px)] text-rice">
-    <div class="text-[12px] tracking-[0.28em] uppercase opacity-70 mb-3">О компании</div>
+    <div class="text-[12px] tracking-[0.28em] uppercase opacity-70 mb-3">О нас</div>
     <h1 class="m-0 font-serif font-medium text-[clamp(34px,5.6vw,70px)] leading-[1.05]">
       {{ page.title }}
     </h1>
@@ -36,22 +36,106 @@
 </section>
 
 {# ── О НАС ───────────────────────────────────────────────────── #}
-{% if page.about_text %}
-<section class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)]">
-  <div class="max-w-[800px] mx-auto
-              prose prose-moss max-w-none
-              prose-headings:font-serif prose-headings:font-medium prose-headings:text-moss
-              prose-h2:text-[clamp(22px,2.8vw,34px)] prose-h2:mt-10 prose-h2:mb-4
-              prose-h3:text-[clamp(17px,2vw,22px)] prose-h3:mt-7 prose-h3:mb-3
-              prose-p:text-[clamp(15px,1.4vw,17px)] prose-p:leading-[1.8] prose-p:font-light prose-p:text-[#3a4a3b]
-              prose-li:text-[clamp(14px,1.3vw,16px)] prose-li:font-light prose-li:text-[#3a4a3b]
-              prose-a:text-terracotta prose-a:no-underline hover:prose-a:underline">
-    {{ page.about_text|richtext }}
+<section class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)] border-b border-bamboo-line">
+  <style>
+    .about-strip::-webkit-scrollbar { height:4px; }
+    .about-strip::-webkit-scrollbar-track { background:transparent; }
+    .about-strip::-webkit-scrollbar-thumb { background:rgba(44,62,45,.18); border-radius:4px; }
+    .about-strip::-webkit-scrollbar-thumb:hover { background:rgba(44,62,45,.35); }
+  </style>
+  <div class="max-w-[1100px] mx-auto">
+
+    {# Split: portrait photo + text+stats #}
+    <div class="grid grid-cols-1 lg:grid-cols-[5fr_8fr] gap-[clamp(36px,5vw,72px)]">
+
+      {# Left: first photo — capped so it stays sharp #}
+      {% with page.about_gallery.first as first_item %}
+      {% if first_item %}
+        {% image first_item.image fill-480x640 format-webp as aph %}
+        <div class="mx-auto lg:mx-0"
+             style="aspect-ratio:3/4; max-width:340px; width:100%;
+                    border-radius:28px; overflow:hidden;
+                    box-shadow:0 8px 40px rgba(44,62,45,.18);">
+          <img src="{{ aph.url }}" alt="Михаил и Наталия Таможниковы"
+               style="width:100%; height:100%; object-fit:cover; object-position:center top;"
+               loading="eager">
+        </div>
+      {% else %}
+        <div class="mx-auto lg:mx-0 bg-[#EFEAE0]"
+             style="aspect-ratio:3/4; max-width:340px; width:100%; border-radius:28px;"></div>
+      {% endif %}
+      {% endwith %}
+
+      {# Right: text + stats #}
+      <div class="lg:pt-4 pb-[clamp(48px,7vh,80px)]">
+        <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-4">Основатели</div>
+        <h2 class="m-0 font-serif font-medium text-[clamp(26px,3.2vw,44px)] leading-[1.1] mb-7">
+          Михаил и Наталия<br>Таможниковы
+        </h2>
+
+        {% if page.about_text %}
+        <div class="prose prose-moss max-w-none
+                    prose-p:text-[clamp(15px,1.35vw,17px)] prose-p:leading-[1.85] prose-p:font-light prose-p:text-[#3a4a3b]
+                    prose-p:mt-0 prose-p:mb-4
+                    prose-a:text-terracotta prose-a:no-underline hover:prose-a:underline">
+          {{ page.about_text|richtext }}
+        </div>
+        {% endif %}
+
+        {# Stats row #}
+        <div class="mt-8 pt-8 border-t border-bamboo-line flex flex-wrap gap-x-8 gap-y-5">
+          <div class="flex items-baseline gap-2">
+            <span class="font-serif text-[clamp(36px,4vw,52px)] leading-none text-moss">12</span>
+            <div>
+              <div class="text-[15px] font-light text-moss leading-tight">лет</div>
+              <div class="text-[11px] tracking-[0.14em] uppercase text-muted">в туризме</div>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-serif text-[clamp(36px,4vw,52px)] leading-none text-moss">2</span>
+            <div>
+              <div class="text-[15px] font-light text-moss leading-tight">года</div>
+              <div class="text-[11px] tracking-[0.14em] uppercase text-muted">в Индонезии</div>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-serif text-[clamp(36px,4vw,52px)] leading-none text-moss">5</span>
+            <div>
+              <div class="text-[15px] font-light text-moss leading-tight">сезонов</div>
+              <div class="text-[11px] tracking-[0.14em] uppercase text-muted">в ЮВА</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# Photo strip: remaining gallery photos #}
+    {% with page.about_gallery.all|slice:"1:10" as strip_items %}
+    {% if strip_items %}
+    <div class="mt-[clamp(72px,12vh,120px)] pt-[clamp(48px,7vh,80px)] border-t border-bamboo-line">
+      <div id="about-strip-outer" style="overflow:hidden; width:100%; padding-bottom:4px;">
+        <div id="about-strip-inner" style="display:flex; gap:10px; width:max-content;">
+          {% for item in strip_items %}
+            {% image item.image fill-240x320 format-webp as simg %}
+            <div style="flex:0 0 auto; width:clamp(130px,18vw,200px);
+                        aspect-ratio:3/4; border-radius:14px; overflow:hidden;
+                        box-shadow:0 2px 12px rgba(44,62,45,.10);">
+              <img src="{{ simg.url }}" alt="Путешествие" loading="lazy"
+                   style="width:100%; height:100%; object-fit:cover;">
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
   </div>
 </section>
-{% endif %}
 
 {# ── ЮРИДИЧЕСКАЯ ИНФОРМАЦИЯ ──────────────────────────────────── #}
+{% if page.company_full_name or page.ogrn or page.inn or page.kpp or page.legal_address or page.actual_address or page.bank_name or page.bank_bik or page.bank_city or page.bank_settlement or page.bank_corr %}
 <section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)]
                 bg-[#EFEAE0] border-t border-bamboo-line border-b border-bamboo-line">
   <div class="max-w-[1100px] mx-auto">
@@ -61,41 +145,47 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-bamboo-line rounded-2xl overflow-hidden border border-bamboo-line">
 
+      {% if page.company_full_name %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">Полное наименование</div>
-        <div class="text-[14.5px] font-light text-moss leading-snug">
-          {{ page.company_full_name|default:"—" }}
-        </div>
+        <div class="text-[14.5px] font-light text-moss leading-snug">{{ page.company_full_name }}</div>
       </div>
+      {% endif %}
 
+      {% if page.ogrn %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">ОГРН</div>
-        <div class="text-[14.5px] font-light text-moss">{{ page.ogrn|default:"—" }}</div>
+        <div class="text-[14.5px] font-light text-moss">{{ page.ogrn }}</div>
       </div>
+      {% endif %}
 
+      {% if page.inn %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">ИНН</div>
-        <div class="text-[14.5px] font-light text-moss">{{ page.inn|default:"—" }}</div>
+        <div class="text-[14.5px] font-light text-moss">{{ page.inn }}</div>
       </div>
+      {% endif %}
 
+      {% if page.kpp %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">КПП</div>
-        <div class="text-[14.5px] font-light text-moss">{{ page.kpp|default:"—" }}</div>
+        <div class="text-[14.5px] font-light text-moss">{{ page.kpp }}</div>
       </div>
+      {% endif %}
 
+      {% if page.legal_address %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">Юридический адрес</div>
-        <div class="text-[14.5px] font-light text-moss leading-snug">
-          {{ page.legal_address|default:"—" }}
-        </div>
+        <div class="text-[14.5px] font-light text-moss leading-snug">{{ page.legal_address }}</div>
       </div>
+      {% endif %}
 
+      {% if page.actual_address %}
       <div class="bg-rice px-6 py-5">
         <div class="text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-1.5">Фактический адрес</div>
-        <div class="text-[14.5px] font-light text-moss leading-snug">
-          {{ page.actual_address|default:"—" }}
-        </div>
+        <div class="text-[14.5px] font-light text-moss leading-snug">{{ page.actual_address }}</div>
       </div>
+      {% endif %}
 
     </div>
 
@@ -145,6 +235,7 @@
 
   </div>
 </section>
+{% endif %}
 
 {# ── ТУРОПЕРАТОР ─────────────────────────────────────────────── #}
 {% if page.is_operator and page.registry_number %}
@@ -346,4 +437,30 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<style>
+@keyframes about-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+#about-strip-inner {
+  animation: about-ticker 35s linear infinite;
+  will-change: transform;
+}
+#about-strip-outer:hover #about-strip-inner {
+  animation-play-state: paused;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var inner = document.getElementById('about-strip-inner');
+  if (!inner) return;
+  // Дублируем карточки для бесшовного цикла
+  Array.from(inner.children).forEach(function (child) {
+    inner.appendChild(child.cloneNode(true));
+  });
+});
+</script>
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags humanize %}
 
 {% block extra_head %}
 {% autoescape off %}
@@ -172,7 +172,7 @@
           </span>
         </div>
         <div class="font-serif font-medium text-[clamp(22px,2.6vw,32px)] text-moss mb-2.5">
-          ${{ date.price }}
+          {{ date.price|intcomma }}&nbsp;{{ date.currency_symbol }}
         </div>
         <div class="h-[3px] bg-bamboo-line rounded-sm overflow-hidden mb-2.5">
           <div class="h-full rounded-sm transition-all duration-500
@@ -345,6 +345,54 @@
 </section>
 {% endif %}
 
+{# ── ГАЛЕРЕЯ-МОЗАИКА ──────────────────────────────────────── #}
+{% if page.gallery_images.all %}
+<section class="py-[clamp(32px,5vh,56px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line">
+  <style>
+    .gallery-mosaic {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 180px 180px;
+      gap: 10px;
+    }
+    .gallery-mosaic .g-large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    .gallery-mosaic .g-sm-hide { display: block; }
+    @media (max-width: 640px) {
+      .gallery-mosaic {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 150px 150px;
+      }
+      .gallery-mosaic .g-sm-hide { display: none; }
+    }
+  </style>
+  <div class="gallery-mosaic max-w-[1100px] mx-auto">
+    {% for item in page.gallery_images.all|slice:":5" %}
+      {% if forloop.first %}
+        {% image item.image fill-720x480 format-webp as gimg %}
+        <div class="g-large rounded-2xl overflow-hidden shadow-zen">
+          <img src="{{ gimg.url }}" alt="{{ page.title }}"
+               loading="lazy" class="w-full h-full object-cover">
+        </div>
+      {% elif forloop.counter <= 3 %}
+        {% image item.image fill-540x360 format-webp as gimg %}
+        <div class="rounded-2xl overflow-hidden shadow-zen">
+          <img src="{{ gimg.url }}" alt="{{ page.title }}"
+               loading="lazy" class="w-full h-full object-cover">
+        </div>
+      {% else %}
+        {% image item.image fill-540x360 format-webp as gimg %}
+        <div class="g-sm-hide rounded-2xl overflow-hidden shadow-zen">
+          <img src="{{ gimg.url }}" alt="{{ page.title }}"
+               loading="lazy" class="w-full h-full object-cover">
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
 {# ── ФИНАЛЬНЫЙ CTA ───────────────────────────────────────── #}
 <section class="py-[clamp(80px,14vh,160px)] px-[clamp(20px,6vw,96px)]
@@ -383,7 +431,7 @@ document.addEventListener('alpine:init', () => {
     {% for d in page.tour_dates.all %}
     {
       label: '{{ d.start_date|date:"j M" }} — {{ d.end_date|date:"j M" }}',
-      price: '${{ d.price }}',
+      price: '{{ d.price|intcomma }} {{ d.currency_symbol }}',
       spots: {{ d.spots_left }},
     },
     {% endfor %}

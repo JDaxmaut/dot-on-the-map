@@ -92,6 +92,22 @@ class HomePage(Page):
                      "tours.AboutPage", "tours.LegalPage"]
 
 
+# ─── ABOUT GALLERY IMAGE (inline child) ──────────────────────
+class AboutGalleryImage(Orderable):
+    page  = ParentalKey("AboutPage", on_delete=models.CASCADE,
+                        related_name="about_gallery")
+    image = models.ForeignKey(
+        get_image_model_string(), on_delete=models.CASCADE,
+        related_name="+", verbose_name=_("Фото"),
+    )
+
+    panels = [FieldPanel("image")]
+
+    class Meta(Orderable.Meta):
+        verbose_name        = "Фото команды"
+        verbose_name_plural = "Фото команды"
+
+
 # ─── TOUR GALLERY IMAGE (inline child) ───────────────────────
 class TourGalleryImage(Orderable):
     page    = ParentalKey("TourPage", on_delete=models.CASCADE,
@@ -114,13 +130,26 @@ class TourGalleryImage(Orderable):
 
 # ─── TOUR DATE (inline child) ─────────────────────────────────
 class TourDate(models.Model):
+    CURRENCY_CHOICES = [
+        ("RUB", "₽ Рубли"),
+        ("USD", "$ Доллары"),
+        ("EUR", "€ Евро"),
+    ]
+    CURRENCY_SYMBOLS = {"RUB": "₽", "USD": "$", "EUR": "€"}
+
     page        = ParentalKey("TourPage", on_delete=models.CASCADE,
                               related_name="tour_dates")
     start_date  = models.DateField(_("Дата заезда"))
     end_date    = models.DateField(_("Дата выезда"))
-    price       = models.PositiveIntegerField(_("Цена (USD)"))
+    price       = models.PositiveIntegerField(_("Цена"))
+    currency    = models.CharField(_("Валюта"), max_length=3,
+                                   choices=CURRENCY_CHOICES, default="RUB")
     total_spots = models.PositiveSmallIntegerField(_("Всего мест"), default=8)
     spots_left  = models.PositiveSmallIntegerField(_("Свободных мест"), default=8)
+
+    @property
+    def currency_symbol(self):
+        return self.CURRENCY_SYMBOLS.get(self.currency, self.currency)
 
     @property
     def fill_percent(self):
@@ -132,6 +161,7 @@ class TourDate(models.Model):
         FieldPanel("start_date"),
         FieldPanel("end_date"),
         FieldPanel("price"),
+        FieldPanel("currency"),
         FieldPanel("total_spots"),
         FieldPanel("spots_left"),
     ]
@@ -534,6 +564,7 @@ class AboutPage(Page):
             FieldPanel("hero_image"),
             FieldPanel("about_text"),
         ], heading="О компании"),
+        InlinePanel("about_gallery", label="Фото команды / путешествий"),
 
         MultiFieldPanel([
             FieldPanel("company_full_name"),

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django.contrib.humanize",
     # Project
     "tours",
 ]
@@ -123,7 +124,8 @@ WAGTAIL_I18N_ENABLED = False
 from PIL import ImageFile as _PILImageFile
 _PILImageFile.LOAD_TRUNCATED_IMAGES = True
 
-WAGTAILIMAGES_WEBP_QUALITY = 82
+WAGTAILIMAGES_WEBP_QUALITY = 88
+WAGTAILIMAGES_JPEG_QUALITY = 88
 WAGTAILIMAGES_FORMAT_CONVERSIONS = {
     "jpeg": "webp",
     "jpg": "webp",
