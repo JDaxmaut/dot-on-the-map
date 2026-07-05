@@ -11,7 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-in-production")
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="tochka-nakarte.ru").split(",")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://tochka-nakarte.ru").split(",")
 
 INSTALLED_APPS = [
     # Wagtail
@@ -118,7 +119,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 # Wagtail
 WAGTAIL_SITE_NAME = "Точка на карте"
-WAGTAILADMIN_BASE_URL = config("WAGTAILADMIN_BASE_URL", default="https://tochka.travel")
+WAGTAILADMIN_BASE_URL = config("WAGTAILADMIN_BASE_URL", default="https://tochka-nakarte.ru")
 WAGTAIL_I18N_ENABLED = False
 
 from PIL import ImageFile as _PILImageFile
