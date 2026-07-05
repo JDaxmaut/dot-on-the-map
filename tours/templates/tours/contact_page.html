@@ -62,131 +62,76 @@
         </div>
         <div class="h-px bg-bamboo-line"></div>
         {% endif %}
-        {% if page.address %}
-        <div>
-          <div class="text-[11.5px] tracking-[0.2em] uppercase text-muted-2 mb-2">Студия</div>
-          <div class="text-[16px] leading-relaxed font-light text-[#3a4a3b]">
-            {{ page.address }}<br>{{ page.hours }}
-          </div>
-        </div>
-        {% endif %}
 
-        <div class="pt-2">
-          <a href="https://t.me/tochka_nakarte" target="_blank" rel="noopener noreferrer"
-             class="flex items-center gap-4 p-5 rounded-2xl no-underline group
-                    bg-[#EFF8FE] hover:bg-[#27A7E7] transition-colors duration-300">
-            <div class="w-11 h-11 rounded-full bg-[#27A7E7] group-hover:bg-white/20
-                        flex items-center justify-center flex-shrink-0 transition-colors duration-300">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="text-[11px] tracking-[0.16em] uppercase text-[#27A7E7]
-                          group-hover:text-white/70 transition-colors duration-300 mb-0.5">
-                Быстрый ответ
-              </div>
-              <div class="font-serif text-[20px] text-moss group-hover:text-white
-                          transition-colors duration-300 leading-tight">
-                Написать в Telegram
-              </div>
-            </div>
-          </a>
-        </div>
 
       </div>
     </div>
 
-    {# Right: form #}
+    {# Right: мессенджеры #}
     <div class="bg-[#EFEAE0] rounded-[24px] p-[clamp(28px,4vw,52px)] shadow-zen">
-      <div x-data="contactForm()" x-show="!sent">
-        <h2 class="m-0 mb-7 font-serif font-medium text-[clamp(24px,2.8vw,34px)]">Оставить заявку</h2>
-        <form @submit.prevent="submit($event)" novalidate>
-          {% csrf_token %}
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-7 gap-y-6">
-            {% for field in form %}
-            <div class="{% if field.name == 'message' %}sm:col-span-2{% endif %}">
-              <label class="block text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1.5">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-              </label>
-              {{ field }}
-              {% if field.errors %}
-              <p class="mt-1 text-[12px] text-terracotta-dark">{{ field.errors.0 }}</p>
-              {% endif %}
-            </div>
-            {% endfor %}
 
-            {# Мат-капча #}
-            <div class="sm:col-span-2">
-              <label class="block text-[11.5px] tracking-[0.16em] uppercase text-muted-2 mb-1.5">
-                Сколько будет {{ captcha_a }} + {{ captcha_b }}? *
-              </label>
-              <input type="text" inputmode="numeric" pattern="[0-9]*"
-                     name="captcha_answer" required
-                     class="w-full bg-transparent border-0 border-b border-bamboo-line pb-2
-                            text-[15px] font-light text-moss outline-none
-                            focus:border-moss transition-colors placeholder:text-muted-2"
-                     placeholder="Введите число">
-              <p x-show="errors.captcha_answer" x-text="errors.captcha_answer"
-                 class="mt-1 text-[12px] text-terracotta-dark" style="display:none"></p>
-            </div>
+      {# Контекст тура — показывается если пришли с тура #}
+      <div id="tour-context"
+           class="mb-8 px-5 py-4 bg-rice rounded-2xl border border-bamboo-line"
+           style="display:none">
+        <div class="text-[11px] tracking-[0.14em] uppercase text-muted-2 mb-1">Выбранный тур</div>
+        <div id="ctx-tour" class="font-serif text-[18px] text-moss leading-snug"></div>
+        <div id="ctx-date" class="text-[13px] font-light text-muted mt-0.5"></div>
+      </div>
 
-            {# Согласие на обработку ПД #}
-            <div class="sm:col-span-2">
-              <label class="flex items-start gap-3 cursor-pointer">
-                <span class="relative w-[18px] h-[18px] flex-shrink-0 mt-[2px]">
-                  <input type="checkbox" name="consent" required
-                         class="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer m-0 z-10">
-                  <span class="absolute inset-0 rounded-[3px] border border-bamboo-line bg-rice/60
-                               pointer-events-none transition-all duration-150
-                               peer-checked:bg-terracotta peer-checked:border-terracotta
-                               peer-focus-visible:ring-2 peer-focus-visible:ring-terracotta/30
-                               peer-focus-visible:ring-offset-1"></span>
-                  <svg class="absolute inset-0 w-full h-full p-[3px] text-rice pointer-events-none
-                              opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
-                       viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M2 7.5l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8"
-                          stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="text-[13px] font-light text-muted leading-relaxed">
-                  Я согласен(а) с
-                  <a href="{{ privacy_url|default:'/privacy/' }}" target="_blank"
-                     class="text-terracotta hover:underline">Политикой обработки персональных данных</a> *
-                </span>
-              </label>
-              <p x-show="errors.consent" x-text="errors.consent"
-                 class="mt-1.5 ml-[27px] text-[12px] text-terracotta-dark" style="display:none"></p>
+      <h2 class="m-0 mb-3 font-serif font-medium text-[clamp(24px,2.8vw,34px)]">
+        Напишите нам
+      </h2>
+      <p class="m-0 mb-8 text-[15px] font-light text-muted leading-relaxed">
+        Ответим в течение нескольких часов, подберём даты и расскажем всё о туре.
+      </p>
+
+      <div class="flex flex-col gap-4">
+        {# Telegram #}
+        <a href="https://t.me/tochka_nakarte" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-4 p-5 rounded-2xl no-underline group
+                  bg-[#EFF8FE] hover:bg-[#229ED9] transition-colors duration-300">
+          <div class="w-12 h-12 rounded-full bg-[#229ED9] group-hover:bg-white/20
+                      flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#2C3E2D">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[11px] tracking-[0.14em] uppercase text-[#229ED9]
+                        group-hover:text-white/70 transition-colors duration-300 mb-0.5">
+              Быстрый ответ
+            </div>
+            <div class="font-serif text-[20px] text-moss group-hover:text-white
+                        transition-colors duration-300">
+              Написать в Telegram
             </div>
           </div>
+        </a>
 
-          <p x-show="errors.__all__" x-text="errors.__all__"
-             class="mt-5 text-[12.5px] text-terracotta-dark text-center" style="display:none"></p>
-
-          <button type="submit" :disabled="loading"
-                  class="mt-8 w-full bg-terracotta text-rice border-0 rounded-full py-[18px]
-                         text-[13px] tracking-[0.18em] uppercase cursor-pointer font-sans
-                         hover:bg-terracotta-dark transition-colors duration-300
-                         disabled:opacity-60 disabled:cursor-not-allowed">
-            <span x-show="!loading">Отправить заявку</span>
-            <span x-show="loading" style="display:none">Отправляем…</span>
-          </button>
-        </form>
+        {# WhatsApp #}
+        <a id="wa-link" href="https://wa.me/79615215290" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-4 p-5 rounded-2xl no-underline group
+                  bg-[#EDFBF2] hover:bg-[#25D366] transition-colors duration-300">
+          <div class="w-12 h-12 rounded-full bg-[#25D366] group-hover:bg-white/20
+                      flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#2C3E2D">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[11px] tracking-[0.14em] uppercase text-[#25D366]
+                        group-hover:text-white/70 transition-colors duration-300 mb-0.5">
+              +7 (961) 521-52-90
+            </div>
+            <div class="font-serif text-[20px] text-moss group-hover:text-white
+                        transition-colors duration-300">
+              Написать в WhatsApp
+            </div>
+          </div>
+        </a>
       </div>
 
-      <div x-show="sent" class="text-center py-[clamp(30px,6vw,70px)]" style="display:none">
-        <div class="w-16 h-16 rounded-full bg-terracotta flex items-center justify-center mx-auto mb-6">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="1.6">
-            <path d="M5 12.5l4.5 4.5L19 7"/>
-          </svg>
-        </div>
-        <h2 class="m-0 mb-3.5 font-serif font-medium text-[clamp(26px,3.2vw,38px)]">
-          Заявка отправлена
-        </h2>
-        <p class="m-0 text-[16px] leading-relaxed font-light text-muted max-w-[38ch] mx-auto">
-          Мы свяжемся с вами в течение одного дня и начнём собирать ваш маршрут.
-        </p>
-      </div>
     </div>
 
   </div>
@@ -196,39 +141,17 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('alpine:init', () => {
-  Alpine.data('contactForm', () => ({
-    sent: false,
-    loading: false,
-    errors: {},
-    async submit(e) {
-      this.errors = {};
-      this.loading = true;
-      const form = e.target;
-      const data = new FormData(form);
-      try {
-        const r = await fetch(window.location.href, {
-          method: 'POST',
-          body: data,
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        });
-        if (r.ok) {
-          this.sent = true;
-        } else {
-          const json = await r.json().catch(() => ({}));
-          const raw = json.errors || {};
-          // Flatten arrays to single strings
-          this.errors = Object.fromEntries(
-            Object.entries(raw).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v])
-          );
-        }
-      } catch {
-        this.errors.__all__ = 'Ошибка соединения. Попробуйте ещё раз.';
-      } finally {
-        this.loading = false;
-      }
-    }
-  }));
+document.addEventListener('DOMContentLoaded', function () {
+  var params = new URLSearchParams(window.location.search);
+  var tour = params.get('tour');
+  var date = params.get('date');
+  if (tour) {
+    document.getElementById('tour-context').style.display = 'block';
+    document.getElementById('ctx-tour').textContent = tour;
+    if (date) document.getElementById('ctx-date').textContent = date;
+    var text = 'Здравствуйте! Интересует тур «' + tour + '»' + (date ? ' на ' + date : '') + '. Расскажите подробнее.';
+    document.getElementById('wa-link').href = 'https://wa.me/79615215290?text=' + encodeURIComponent(text);
+  }
 });
 </script>
 {% endblock %}

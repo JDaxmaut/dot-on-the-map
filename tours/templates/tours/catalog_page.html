@@ -44,23 +44,22 @@
         </svg>
       </button>
 
-      {# Mobile: кнопка фильтров — показывает активный фильтр или "Фильтры" #}
-      <button @click="showFilters = !showFilters"
-              class="md:hidden flex items-center gap-1.5 flex-shrink-0 ml-1
-                     text-[11.5px] tracking-[0.14em] uppercase border rounded-full
-                     px-3.5 py-1.5 transition-all duration-300 cursor-pointer bg-transparent"
-              :class="filter !== 'all'
-                ? 'border-terracotta text-terracotta'
+    </div>
+
+    {# Mobile: горизонтальная полоса с чипами — всегда видима #}
+    <div class="md:hidden flex gap-2 overflow-x-auto py-3 border-b border-bamboo-line"
+         style="scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-right:48px">
+      <style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
+      {% for tag in filter_tags %}
+      <button @click="filter='{{ tag.id }}'"
+              class="inline-flex items-center flex-shrink-0 px-4 py-1.5 rounded-full text-[12px]
+                     tracking-[0.14em] uppercase border font-sans transition-all duration-300 cursor-pointer"
+              :class="filter==='{{ tag.id }}'
+                ? 'bg-terracotta border-terracotta text-rice'
                 : 'border-bamboo text-muted'">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M3 6h18M7 12h10M11 18h2"/>
-        </svg>
-        <span x-text="filter !== 'all' ? activeFilterLabel : 'Фильтры'">Фильтры</span>
-        <svg class="transition-transform duration-300" :class="showFilters ? 'rotate-180' : ''"
-             width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
+        {{ tag.label }}
       </button>
+      {% endfor %}
     </div>
 
     {# Desktop: фильтры + сортировка всегда видимы #}
@@ -83,32 +82,6 @@
         <button @click="setSort('{{ s.id }}')"
                 class="font-sans text-[12.5px] tracking-[0.12em] uppercase px-3.5 py-2 rounded-md transition-all cursor-pointer"
                 :class="sort==='{{ s.id }}' ? 'text-moss bg-[#E3DCCF]' : 'text-muted hover:text-moss'">
-          {{ s.label }}
-        </button>
-        {% endfor %}
-      </div>
-    </div>
-
-    {# Mobile: выпадающая панель фильтров #}
-    <div x-show="showFilters" x-collapse class="md:hidden">
-      <div class="flex gap-2 overflow-x-auto py-3 scrollbar-none" style="scrollbar-width:none">
-        {% for tag in filter_tags %}
-        <button @click="filter='{{ tag.id }}'; showFilters = false"
-                class="inline-flex items-center flex-shrink-0 px-4 py-1.5 rounded-full text-[12px]
-                       tracking-[0.14em] uppercase border font-sans transition-all duration-300 cursor-pointer"
-                :class="filter==='{{ tag.id }}'
-                  ? 'bg-terracotta border-terracotta text-rice'
-                  : 'border-bamboo text-muted'">
-          {{ tag.label }}
-        </button>
-        {% endfor %}
-      </div>
-      <div class="flex items-center gap-1.5 pb-3 border-t border-bamboo-line pt-2.5">
-        <span class="text-[11px] tracking-[0.12em] uppercase text-muted-2 mr-0.5">Сорт.:</span>
-        {% for s in sort_options %}
-        <button @click="setSort('{{ s.id }}')"
-                class="font-sans text-[11.5px] tracking-[0.10em] uppercase px-3 py-1.5 rounded-md transition-all cursor-pointer"
-                :class="sort==='{{ s.id }}' ? 'text-moss bg-[#E3DCCF]' : 'text-muted'">
           {{ s.label }}
         </button>
         {% endfor %}
