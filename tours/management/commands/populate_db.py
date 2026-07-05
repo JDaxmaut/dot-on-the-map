@@ -771,7 +771,7 @@ class Command(BaseCommand):
                 slug="contact",
                 intro="<p>Расскажите нам о своей мечте — мы найдём для неё маршрут.</p>",
                 email="hello@tochka.travel",
-                telegram="https://t.me/tochka_travel",
+                telegram="https://t.me/tochka_nakarte",
                 whatsapp="https://wa.me/79001234567",
                 address="Тбилиси, ул. Бетлеми, 14",
                 hours="Пн–Пт · 11:00–19:00",
