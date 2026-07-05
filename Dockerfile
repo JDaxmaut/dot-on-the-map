@@ -2,7 +2,9 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DJANGO_SETTINGS_MODULE=tochka.settings
+    DJANGO_SETTINGS_MODULE=tochka.settings \
+    DEBUG=False \
+    SECRET_KEY=build-placeholder-not-used-at-runtime
 
 WORKDIR /app
 
