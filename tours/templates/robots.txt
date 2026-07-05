@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Disallow: /admin/
+Disallow: /tochka-cms/
 Disallow: /django-admin/
 Disallow: /documents/
 Disallow: /search/

@@ -14,7 +14,7 @@ from tours.views import search as search_view
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
-    path("admin/", include(wagtailadmin_urls)),
+    path("tochka-cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("sitemap.xml", sitemap, name="wagtail_sitemap"),
     path("search/", search_view, name="search"),

@@ -118,7 +118,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 # Wagtail
 WAGTAIL_SITE_NAME = "Точка на карте"
-WAGTAILADMIN_BASE_URL = "http://localhost:8000"
+WAGTAILADMIN_BASE_URL = config("WAGTAILADMIN_BASE_URL", default="https://tochka.travel")
 WAGTAIL_I18N_ENABLED = False
 
 from PIL import ImageFile as _PILImageFile
