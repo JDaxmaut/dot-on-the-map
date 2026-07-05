@@ -6,8 +6,10 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - DB_PATH=/app/data/db.sqlite3
     volumes:
-      - db:/app/db.sqlite3
+      - db:/app/data
       - media:/app/media
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]

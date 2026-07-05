@@ -16,6 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN mkdir -p /app/data
+
 # Collect static files at build time
 RUN python manage.py collectstatic --noinput
 
