@@ -13,7 +13,7 @@ services:
       - ./db.sqlite3:/app/data/db.sqlite3
       - ./media:/app/media
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/')"]
+      test: ["CMD", "python", "-c", "import urllib.request; req = urllib.request.Request('http://127.0.0.1:8002/', headers={'Host': 'tochka-nakarte.ru'}); urllib.request.urlopen(req)"]
       interval: 30s
       timeout: 10s
       retries: 3
