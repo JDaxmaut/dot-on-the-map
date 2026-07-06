@@ -23,7 +23,7 @@ RUN mkdir -p /app/data
 # Collect static files at build time
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8000
+EXPOSE 8002
 
 COPY entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r//' /entrypoint.sh && chmod +x /entrypoint.sh

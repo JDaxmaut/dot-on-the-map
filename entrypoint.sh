@@ -5,7 +5,7 @@ mkdir -p /app/data
 touch /app/data/db.sqlite3
 python manage.py migrate --noinput
 exec gunicorn tochka.wsgi:application \
-    --bind 0.0.0.0:8000 \
+    --bind 0.0.0.0:8002 \
     --workers 2 \
     --timeout 120 \
     --access-logfile - \
