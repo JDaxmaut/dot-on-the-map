@@ -43,6 +43,8 @@
           <a href="{{ pd_url|default:'/personal-data/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Персональные данные</a>
           {% slugurl 'payment-rules' as pay_url %}
           <a href="{{ pay_url|default:'/payment-rules/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Оплата и возврат</a>
+          {% slugurl 'soglasie-na-foto-video' as consent_url %}
+          <a href="{{ consent_url|default:'/soglasie-na-foto-video/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Согласие на фото/видео</a>
         </div>
       </div>
       <div>
