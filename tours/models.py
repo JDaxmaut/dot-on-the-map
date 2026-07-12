@@ -197,6 +197,7 @@ class TourPage(Page, ClusterableModel):
                                            ("bali",    "Бали"),
                                            ("japan",   "Япония"),
                                            ("vietnam", "Вьетнам"),
+                                           ("china",   "Китай"),
                                        ],
                                        default="bali")
 
