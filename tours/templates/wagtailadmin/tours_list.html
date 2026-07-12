@@ -4,19 +4,27 @@
 {% block titletag %}Мои туры{% endblock %}
 
 {% block content %}
-<div style="padding:32px 40px;max-width:1200px;">
+<style>
+.tl-wrap { padding: 32px 40px; max-width: 1200px; }
+.tl-head  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 700px) {
+  .tl-wrap { padding: 16px; }
+  .tl-head { flex-direction: column; align-items: flex-start; }
+}
+</style>
+<div class="tl-wrap">
 
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+  <div class="tl-head">
     <h1 style="margin:0;font-size:22px;font-weight:500;color:#ddd8cc;">Мои туры</h1>
     {% if catalog_id %}
-    <a href="/admin/pages/add/tours/tourpage/{{ catalog_id }}/"
+    <a href="/tochka-cms/pages/add/tours/tourpage/{{ catalog_id }}/"
        style="display:inline-flex;align-items:center;gap:8px;background:#C86B49;color:#F4F1EA;
               text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 1v11M1 6.5h11"/></svg>
       Добавить тур
     </a>
     {% endif %}
-  </div>
+  </div>{# /.tl-head #}
 
   {% if live_tours %}
   <div style="margin-bottom:10px;">
@@ -52,7 +60,7 @@
           {{ tour.location|default:"—" }}{% if tour.price_from %} · {{ tour.price_from }}{% endif %}
         </div>
         <div style="display:flex;gap:8px;">
-          <a href="/admin/pages/{{ tour.pk }}/edit/"
+          <a href="/tochka-cms/pages/{{ tour.pk }}/edit/"
              style="flex:1;text-align:center;background:rgba(255,255,255,0.07);color:#ddd8cc;
                     text-decoration:none;padding:7px 0;border-radius:7px;font-size:12px;border:1px solid rgba(255,255,255,0.1);">
             Редактировать
@@ -104,7 +112,7 @@
         <div style="font-size:12px;color:rgba(221,216,204,0.45);margin-bottom:14px;">
           {{ tour.location|default:"Локация не указана" }}
         </div>
-        <a href="/admin/pages/{{ tour.pk }}/edit/"
+        <a href="/tochka-cms/pages/{{ tour.pk }}/edit/"
            style="display:block;text-align:center;background:rgba(255,255,255,0.07);color:#ddd8cc;
                   text-decoration:none;padding:7px 0;border-radius:7px;font-size:12px;border:1px solid rgba(255,255,255,0.1);">
           Редактировать и опубликовать
@@ -120,7 +128,7 @@
     <div style="font-size:40px;margin-bottom:16px;">✈</div>
     <div style="font-size:15px;">Туров пока нет</div>
     {% if catalog_id %}
-    <a href="/admin/pages/add/tours/tourpage/{{ catalog_id }}/"
+    <a href="/tochka-cms/pages/add/tours/tourpage/{{ catalog_id }}/"
        style="display:inline-block;margin-top:20px;color:#C86B49;text-decoration:none;font-size:13px;">
       Создать первый тур →
     </a>

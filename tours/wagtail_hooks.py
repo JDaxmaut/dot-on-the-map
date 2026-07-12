@@ -112,7 +112,7 @@ def quick_save_dates(request):
                 pass
         if changed:
             d.save()
-    return HttpResponseRedirect("/admin/")
+    return HttpResponseRedirect("/tochka-cms/")
 
 
 @hooks.register("register_admin_urls")
@@ -126,7 +126,7 @@ def register_admin_urls():
 # ── Пункт меню «Туры» ─────────────────────────────────────────
 @hooks.register("register_admin_menu_item")
 def register_tours_menu_item():
-    return MenuItem("Туры", "/admin/moi-tury/", icon_name="list-ul", order=200)
+    return MenuItem("Туры", "/tochka-cms/moi-tury/", icon_name="list-ul", order=200)
 
 
 # ── Кнопка «Открыть» в списке страниц ─────────────────────────
