@@ -214,6 +214,39 @@ def parse_notes(text):
     return "\n".join(result)
 
 
+FLAG_FILES = {
+    "vietnam": "vietnam(pics.1).jpg",
+    "indonesia": "indonesia-2(pics.3).jpg",
+    "china": "China(pics.1).jpg",
+    "cambodia": "Cambodia(pics.1).jpg",
+    "japan": "japan-2(pics.2).jpg",
+    "laos": "laos(pics.1).jpg",
+    "malaysia": "malaysia-2(pics.2).jpg",
+    "nepal": "nepa-2l(pics.2).jpg",
+    "philippines": "philippines-2(pics.2).jpg",
+    "thailand": "thailand-2(pics.2).jpg",
+    "korea": "south-korea-2(pics.1).jpg",
+}
+
+
+def upload_flag(code, page, seed_dir, collection):
+    fname = FLAG_FILES.get(code)
+    if not fname:
+        return False
+    fpath = os.path.join(seed_dir, fname)
+    if not os.path.exists(fpath):
+        return False
+    with open(fpath, "rb") as f:
+        image = Image(
+            title=f"flag-{code}",
+            file=File(f, name=f"flag-{code}.jpg"),
+            collection=collection,
+        )
+        image.save()
+    page.flag_image = image
+    return True
+
+
 class Command(BaseCommand):
     help = "Создание/обновление всех страниц Правила въезда на продакшене"
 
@@ -262,14 +295,21 @@ class Command(BaseCommand):
             page = EntryRuleCountryPage.objects.filter(country_code=code).first()
 
             if page:
+                updated = False
                 if not page.notes:
                     raw = country_notes.get(code, "")
                     if raw and not raw.startswith("<"):
                         page.notes = parse_notes(raw)
                     elif raw:
                         page.notes = raw
+                    updated = True
+                if not page.flag_image:
+                    if upload_flag(code, page, seed_dir, flags_collection):
+                        updated = True
+                        self.stdout.write(f"  {data['title']}: добавлен флаг")
+                if updated:
                     page.save_revision().publish()
-                    self.stdout.write(f"  {data['title']}: обновлены заметки")
+                    self.stdout.write(f"  {data['title']}: обновлено")
                 else:
                     self.stdout.write(f"  {data['title']}: уже существует")
                 continue
@@ -292,33 +332,7 @@ class Command(BaseCommand):
             else:
                 page.notes = raw_notes
 
-            # Upload flag image if available
-            FLAG_FILES = {
-                "vietnam": "vietnam(pics.1).jpg",
-                "indonesia": "indonesia-2(pics.3).jpg",
-                "china": "China(pics.1).jpg",
-                "cambodia": "Cambodia(pics.1).jpg",
-                "japan": "japan-2(pics.2).jpg",
-                "laos": "laos(pics.1).jpg",
-                "malaysia": "malaysia-2(pics.2).jpg",
-                "nepal": "nepa-2l(pics.2).jpg",
-                "philippines": "philippines-2(pics.2).jpg",
-                "thailand": "thailand-2(pics.2).jpg",
-                "korea": "south-korea-2(pics.1).jpg",
-            }
-            flag_name = FLAG_FILES.get(code)
-            if flag_name:
-                flag_path = os.path.join(seed_dir, flag_name)
-                if os.path.exists(flag_path):
-                    with open(flag_path, "rb") as f:
-                        fname = f"flag-{code}.jpg"
-                        wagtail_image = Image(
-                            title=f"flag-{code}",
-                            file=File(f, name=fname),
-                            collection=flags_collection,
-                        )
-                        wagtail_image.save()
-                    page.flag_image = wagtail_image
+            upload_flag(code, page, seed_dir, flags_collection)
 
             index.add_child(instance=page)
             page.save_revision().publish()
