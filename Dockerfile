@@ -18,7 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/media_bak/original_images
+
+# Копируем исходники флагов в образ (бэкап для томов)
+COPY media/original_images/ /app/media_bak/original_images/
+COPY tours/seed_data/ /app/media_bak/seed_data/
 
 # Collect static files at build time
 RUN python manage.py collectstatic --noinput

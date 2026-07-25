@@ -3,12 +3,10 @@ set -e
 
 mkdir -p /app/data /app/media/original_images
 
-# Копируем флаги из репо в том, если их нет
-for f in /app/tours/seed_data/*.jpg /app/tours/seed_data/*.png; do
-  [ -e "$f" ] || continue
-  bn=$(basename "$f")
-  [ -f "/app/media/original_images/$bn" ] || cp "$f" "/app/media/original_images/"
-done
+# Восстанавливаем флаги из бэкапа в образе, если том пуст
+if [ ! "$(ls -A /app/media/original_images 2>/dev/null)" ]; then
+  cp -n /app/media_bak/original_images/* /app/media/original_images/ 2>/dev/null || true
+fi
 
 python manage.py migrate --noinput
 python manage.py seed_production
