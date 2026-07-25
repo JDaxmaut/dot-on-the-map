@@ -601,3 +601,133 @@ class AboutPage(Page):
     ]
 
     parent_page_types = ["tours.HomePage"]
+
+
+# ─── ENTRY RULES INDEX PAGE ────────────────────────────────────────
+class EntryRulesIndexPage(Page):
+    class Meta:
+        verbose_name = "Правила въезда (главная)"
+        verbose_name_plural = "Правила въезда (главная)"
+
+    hero_image = models.ForeignKey(
+        get_image_model_string(), null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+        verbose_name=_("Фото для hero"),
+    )
+    intro = RichTextField(_("Вступление"), blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("hero_image"),
+        FieldPanel("intro"),
+    ]
+
+    parent_page_types = ["tours.HomePage"]
+    max_count = 1
+    subpage_types = ["tours.EntryRuleCountryPage"]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["countries"] = (
+            EntryRuleCountryPage.objects.live()
+            .child_of(self)
+            .order_by("title")
+        )
+        return context
+
+
+# ─── ENTRY RULE COUNTRY PAGE ────────────────────────────────────────
+class EntryRuleCountryPage(Page):
+    class Meta:
+        verbose_name = "Правила въезда — страна"
+        verbose_name_plural = "Правила въезда — страны"
+
+    COUNTRY_CHOICES = [
+        ("vietnam", "Вьетнам"),
+        ("indonesia", "Индонезия"),
+        ("china", "Китай"),
+        ("cambodia", "Камбоджа"),
+        ("japan", "Япония"),
+        ("laos", "Лаос"),
+        ("malaysia", "Малайзия"),
+        ("nepal", "Непал"),
+        ("philippines", "Филиппины"),
+        ("thailand", "Таиланд"),
+        ("korea", "Южная Корея"),
+    ]
+
+    country_code = models.CharField(_("Код страны"), max_length=20, choices=COUNTRY_CHOICES, unique=True)
+    flag_image = models.ForeignKey(
+        get_image_model_string(), null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+        verbose_name=_("Флаг страны (SVG/PNG)"),
+        help_text="Рекомендуемый формат: SVG или PNG с прозрачным фоном",
+    )
+    hero_image = models.ForeignKey(
+        get_image_model_string(), null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+        verbose_name=_("Фото для hero"),
+    )
+
+    visa_free = models.BooleanField(_("Без визы"), default=False)
+    visa_on_arrival = models.BooleanField(_("Виза по прилёте"), default=False)
+    e_visa = models.BooleanField(_("E-visa"), default=False)
+    visa_required = models.BooleanField(_("Виза заранее"), default=False)
+
+    max_stay = models.CharField(_("Макс. срок пребывания"), max_length=100, blank=True)
+    notes = RichTextField(
+        _("Примечания"), blank=True,
+        features=["bold", "italic", "link", "ul", "ol", "h2", "h3"],
+    )
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            FieldPanel("country_code"),
+            FieldPanel("flag_image"),
+            FieldPanel("hero_image"),
+        ], heading="Базовое"),
+        MultiFieldPanel([
+            FieldPanel("visa_free"),
+            FieldPanel("visa_on_arrival"),
+            FieldPanel("e_visa"),
+            FieldPanel("visa_required"),
+        ], heading="Типы виз"),
+        FieldPanel("max_stay"),
+        FieldPanel("notes"),
+    ]
+
+    parent_page_types = ["tours.EntryRulesIndexPage"]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["sibling_countries"] = (
+            EntryRuleCountryPage.objects.live()
+            .child_of(self.get_parent())
+            .exclude(pk=self.pk)
+            .order_by("title")
+        )
+        return context
+
+    def get_visa_types(self):
+        types = []
+        if self.visa_free:
+            types.append(("visa_free", "Без визы", "green"))
+        if self.visa_on_arrival:
+            types.append(("visa_on_arrival", "Виза по прилёте", "amber"))
+        if self.e_visa:
+            types.append(("e_visa", "E-visa", "blue"))
+        if self.visa_required:
+            types.append(("visa_required", "Виза заранее", "red"))
+        return types
+
+    @property
+    def country_name(self):
+        return dict(self.COUNTRY_CHOICES).get(self.country_code, self.country_code)
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["sibling_countries"] = (
+            EntryRuleCountryPage.objects.live()
+            .sibling_of(self, inclusive=False)
+            .order_by("title")
+        )
+        return context

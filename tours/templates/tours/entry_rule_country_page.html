@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div x-data="entryRuleCountryPage()">
+  <header class="pt-[calc(74px+clamp(48px,9vh,100px))] pb-[clamp(32px,5vh,56px)]
+                 px-[clamp(20px,6vw,96px)]">
+    <div class="max-w-[860px] mx-auto">
+      <div class="flex items-center gap-2.5 text-[11px] tracking-[0.18em] uppercase text-muted-2 mb-5">
+        <a href="{% slugurl 'entry-rules' %}" class="text-muted-2 hover:text-terracotta transition-colors no-underline">Правила въезда</a>
+        <span class="text-muted-2">/</span>
+        <span>{{ page.country_name }}</span>
+      </div>
+      <div class="flex items-start gap-6">
+        {% if page.flag_image %}
+          {% image page.flag_image width-96 format-webp as flag_img %}
+          <div class="w-16 h-12 flex-shrink-0 mt-1.5 flex items-center justify-center">
+            <img src="{{ flag_img.url }}" alt="{{ page.country_name }}" class="max-w-full max-h-full object-contain">
+          </div>
+        {% endif %}
+        <div>
+          <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-2">Правила въезда</div>
+          <h1 class="m-0 font-serif font-medium text-[clamp(32px,5vw,60px)] leading-[1.04]">
+            {{ page.country_name }}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="px-[clamp(20px,6vw,96px)]">
+    <div class="max-w-[860px] mx-auto">
+      <div class="flex flex-wrap gap-3 mb-6">
+        {% if page.visa_free %}
+        <span class="inline-flex px-4 py-1.5 rounded-full bg-[#EDF2EA] text-[#4d7a5a] text-[12px] font-medium border border-[#d4e4d0]">Без визы</span>
+        {% endif %}
+        {% if page.visa_on_arrival %}
+        <span class="inline-flex px-4 py-1.5 rounded-full bg-[#FDF3E7] text-[#c4872a] text-[12px] font-medium border border-[#f0dfc0]">Виза по прилёте</span>
+        {% endif %}
+        {% if page.e_visa %}
+        <span class="inline-flex px-4 py-1.5 rounded-full bg-[#E8F0F8] text-[#3a6b9e] text-[12px] font-medium border border-[#c8d8e8]">E-visa</span>
+        {% endif %}
+        {% if page.visa_required %}
+        <span class="inline-flex px-4 py-1.5 rounded-full bg-[#F5E8E4] text-[#b87d6a] text-[12px] font-medium border border-[#e8cdc0]">Виза заранее</span>
+        {% endif %}
+      </div>
+
+      {% if page.max_stay %}
+      <div class="text-[14px] leading-relaxed font-light text-[#3a4a3b] mb-8 py-3.5 px-4 rounded-xl bg-[#F4F1EA] border border-bamboo-line">
+        <span class="font-medium text-moss">Максимальный срок пребывания:</span>
+        <span>{{ page.max_stay }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="px-[clamp(20px,6vw,96px)] pb-[clamp(64px,10vh,120px)]">
+    <div class="max-w-[860px] mx-auto">
+      {% if page.notes %}
+      <div class="entry-rule-content text-[clamp(14.5px,1.4vw,17px)] leading-[1.8] font-light text-[#3a4a3b]">
+        {{ page.notes|richtext }}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="py-[clamp(40px,6vh,72px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line bg-[#EFEAE0]">
+    <div class="max-w-[860px] mx-auto">
+      <div class="text-[11px] tracking-[0.18em] uppercase text-terracotta mb-5 text-center">Другие страны</div>
+      <div class="flex flex-wrap justify-center gap-2 mb-6">
+        {% for sibling in sibling_countries %}
+          <a href="{{ sibling.url }}"
+             class="inline-flex px-4 py-2 rounded-full border border-bamboo-line text-[12px] no-underline text-muted hover:border-terracotta hover:text-terracotta hover:bg-rice transition-all duration-200">
+            {{ sibling.title }}
+          </a>
+        {% endfor %}
+      </div>
+      <div class="text-center">
+        <a href="{% slugurl 'entry-rules' %}"
+           class="inline-flex items-center gap-2 text-[12px] tracking-[0.16em] uppercase no-underline text-terracotta hover:text-terracotta-dark transition-colors">
+          Все страны
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .entry-rule-content h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 500;
+    margin: 1.5em 0 0.5em;
+    line-height: 1.2;
+    color: #2C3E2D;
+  }
+  .entry-rule-content h2:first-child {
+    margin-top: 0;
+  }
+  .entry-rule-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(19px, 2.2vw, 26px);
+    font-weight: 500;
+    margin: 1.2em 0 0.4em;
+    color: #2C3E2D;
+  }
+  .entry-rule-content p {
+    margin: 0.6em 0;
+  }
+  .entry-rule-content ul,
+  .entry-rule-content ol {
+    margin: 0.6em 0;
+    padding-left: 1.5em;
+  }
+  .entry-rule-content li {
+    margin: 0.3em 0;
+  }
+  .entry-rule-content a {
+    color: #C86B49;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .entry-rule-content a:hover {
+    color: #b35a3a;
+  }
+  .entry-rule-content strong {
+    font-weight: 500;
+    color: #2C3E2D;
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('entryRuleCountryPage', () => ({}));
+});
+</script>
+{% endblock %}

@@ -27,6 +27,7 @@
         <div class="flex flex-col gap-3 text-[14px] font-light">
           <a href="/" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Главная</a>
           <a href="{% slugurl 'catalog' %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Туры</a>
+          <a href="{% slugurl 'entry-rules' %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Правила въезда</a>
           {% slugurl 'about' as about_url %}
           <a href="{{ about_url|default:'/about/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">О нас</a>
           <a href="{% slugurl 'contact' %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Контакты</a>

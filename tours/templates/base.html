@@ -61,6 +61,7 @@
       </a>
 
       <nav class="hidden lg:flex gap-8 items-center justify-end flex-1 text-[12.5px] tracking-[0.14em] uppercase">
+        <a href="{% slugurl 'entry-rules' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">Правила въезда</a>
         <a href="{% slugurl 'about' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">О нас</a>
         <a href="{% slugurl 'contact' %}" class="opacity-80 hover:opacity-100 transition-opacity no-underline">Контакты</a>
         <a href="/search/" aria-label="Поиск" class="opacity-70 hover:opacity-100 transition-opacity">
@@ -108,6 +109,7 @@
       </button>
       <a @click="open=false" href="/" class="font-serif text-[32px] text-rice no-underline">Главная</a>
       <a @click="open=false" href="{% slugurl 'catalog' %}" class="font-serif text-[32px] text-terracotta no-underline">Туры</a>
+      <a @click="open=false" href="{% slugurl 'entry-rules' %}" class="font-serif text-[32px] text-rice no-underline">Правила въезда</a>
       <a @click="open=false" href="{% slugurl 'about' %}" class="font-serif text-[32px] text-rice no-underline">О нас</a>
       <a @click="open=false" href="{% slugurl 'contact' %}" class="font-serif text-[32px] text-rice no-underline">Контакты</a>
       <a @click="open=false" href="/search/" class="font-serif text-[32px] text-rice/60 no-underline">Поиск</a>
