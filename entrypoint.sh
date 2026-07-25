@@ -3,7 +3,7 @@ set -e
 
 mkdir -p /app/data
 python manage.py migrate --noinput
-python manage.py seed_production --noinput
+python manage.py seed_production
 python manage.py collectstatic --noinput
 exec gunicorn tochka.wsgi:application \
     --bind 0.0.0.0:8002 \
