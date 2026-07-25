@@ -411,30 +411,13 @@
   <div class="max-w-[1100px] mx-auto">
     <div class="text-[12px] tracking-[0.28em] uppercase text-muted-2 mb-6">Правовые документы</div>
     <div class="flex flex-wrap gap-3">
-      {% slugurl "offer" as offer_url %}{% if offer_url %}
-      <a href="{{ offer_url }}"
+      {% for lp in legal_pages %}
+      <a href="{% pageurl lp %}"
          class="px-5 py-2.5 rounded-full border border-bamboo text-[12.5px] font-light
                 text-muted no-underline hover:border-terracotta hover:text-terracotta transition-all">
-        Публичная оферта
-      </a>{% endif %}
-      {% slugurl "privacy" as privacy_url %}{% if privacy_url %}
-      <a href="{{ privacy_url }}"
-         class="px-5 py-2.5 rounded-full border border-bamboo text-[12.5px] font-light
-                text-muted no-underline hover:border-terracotta hover:text-terracotta transition-all">
-        Политика конфиденциальности
-      </a>{% endif %}
-      {% slugurl "personal-data" as pd_url %}{% if pd_url %}
-      <a href="{{ pd_url }}"
-         class="px-5 py-2.5 rounded-full border border-bamboo text-[12.5px] font-light
-                text-muted no-underline hover:border-terracotta hover:text-terracotta transition-all">
-        Обработка персональных данных
-      </a>{% endif %}
-      {% slugurl "payment-rules" as pay_url %}{% if pay_url %}
-      <a href="{{ pay_url }}"
-         class="px-5 py-2.5 rounded-full border border-bamboo text-[12.5px] font-light
-                text-muted no-underline hover:border-terracotta hover:text-terracotta transition-all">
-        Правила оплаты и возврата
-      </a>{% endif %}
+        {{ lp.title }}
+      </a>
+      {% endfor %}
     </div>
   </div>
 </section>

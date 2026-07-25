@@ -35,14 +35,9 @@
       <div>
         <div class="text-[11.5px] tracking-[0.2em] uppercase opacity-50 mb-4">Документы</div>
         <div class="flex flex-col gap-3 text-[14px] font-light">
-          {% slugurl 'offer' as offer_url %}
-          <a href="{{ offer_url|default:'/offer/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Публичная оферта</a>
-          {% slugurl 'privacy' as privacy_url %}
-          <a href="{{ privacy_url|default:'/privacy/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Конфиденциальность</a>
-          {% slugurl 'personal-data' as pd_url %}
-          <a href="{{ pd_url|default:'/personal-data/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Персональные данные</a>
-{% slugurl 'soglasie-na-foto-video' as consent_url %}
-          <a href="{{ consent_url|default:'/soglasie-na-foto-video/' }}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">Согласие на фото/видео</a>
+          {% for lp in legal_pages %}
+          <a href="{% pageurl lp %}" class="text-inherit no-underline opacity-80 hover:opacity-100 transition-opacity">{{ lp.title }}</a>
+          {% endfor %}
         </div>
       </div>
       <div>
