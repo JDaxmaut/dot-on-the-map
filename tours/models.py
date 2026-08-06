@@ -391,7 +391,7 @@ class ContactPage(Page):
         verbose_name = "Страница контактов"
 
     intro     = RichTextField(_("Вступление"), blank=True)
-    email     = models.EmailField(_("Email"), default="hello@tochka.travel")
+    email     = models.EmailField(_("Email"), default="Tochkanacarte@yandex.ru")
     telegram  = models.URLField(_("Telegram"), blank=True)
     whatsapp  = models.URLField(_("WhatsApp"), blank=True)
     address   = models.CharField(_("Адрес"), max_length=200, blank=True)

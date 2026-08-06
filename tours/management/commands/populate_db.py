@@ -770,7 +770,7 @@ class Command(BaseCommand):
                 title="Контакты",
                 slug="contact",
                 intro="<p>Расскажите нам о своей мечте — мы найдём для неё маршрут.</p>",
-                email="hello@tochka.travel",
+                email="Tochkanacarte@yandex.ru",
                 telegram="https://t.me/tochka_nakarte",
                 whatsapp="https://wa.me/79001234567",
                 address="Тбилиси, ул. Бетлеми, 14",

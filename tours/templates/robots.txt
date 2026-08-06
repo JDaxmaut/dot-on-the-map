@@ -6,4 +6,4 @@ Disallow: /django-admin/
 Disallow: /documents/
 Disallow: /search/
 
-Sitemap: https://tochka.travel/sitemap.xml
+Sitemap: https://tochka-nakarte.ru/sitemap.xml

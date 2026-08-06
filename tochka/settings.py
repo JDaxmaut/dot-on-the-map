@@ -14,6 +14,26 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="tochka-nakarte.ru").split(",")
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://tochka-nakarte.ru").split(",")
 
+# ── Безопасность транспорта ────────────────────────────────────
+# За прокси (nginx) отдаётся только HTTPS, поэтому считаем запросы
+# пришедшими по HTTPS, если nginx проставил X-Forwarded-Proto.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# HSTS — браузер запоминает «только HTTPS» на год.
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+
+# ── Куки ───────────────────────────────────────────────────────
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY сознательно НЕ включаем — Wagtail admin читает
+# csrftoken из куки для AJAX-запросов (X-Csrftoken).
+CSRF_COOKIE_SAMESITE = "Lax"
+
 INSTALLED_APPS = [
     # Wagtail
     "wagtail.contrib.forms",
@@ -49,6 +69,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "tochka.security_middleware.SecurityHeadersMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
