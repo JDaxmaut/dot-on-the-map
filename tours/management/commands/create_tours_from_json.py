@@ -1,8 +1,9 @@
 """
 python manage.py create_tours_from_json
 
-Импортирует 13 туров из JSON (каталог tours_data) в каталог туров.
-Текст — дословно из источников. Фото — по одному hero на тур (папка final).
+Импортирует 13 туров из JSON (каталог tours_data) и 4 вьетнамских тура
+(каталог tours_data_vietnam) в каталог туров.
+Текст — дословно из источников. Фото — по одному hero на тур.
 """
 import os
 import re
@@ -13,6 +14,9 @@ from django.core.management.base import BaseCommand
 
 JSON_DIR = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tours_data"
 PHOTOS_DIR = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tour_photos\final"
+
+JSON_DIR_VN = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tours_data_vietnam"
+PHOTOS_DIR_VN = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tour_photos\final_vietnam"
 
 DEFAULT_GROUP_SIZE = "индивидуально · до 6 человек"
 DEFAULT_GROUP_MAX = 6
@@ -102,6 +106,35 @@ TOURS = {
     },
 }
 
+# key из JSON -> настройки вьетнамских туров
+VIETNAM_TOURS = {
+    "ves-vyetnam": {
+        "slug": "ves-vyetnam",
+        "location": "Вьетнам · Хошимин · Дананг · Хойан · Ханой · Халонг",
+        "country_tag": "vietnam",
+        "tags": ["Вьетнам", "Хошимин", "Ханой", "Халонг", "Экскурсионный"],
+        "group_size": "групповой · от 1 человека",
+    },
+    "grand-vyetnam": {
+        "slug": "grand-vyetnam",
+        "location": "Вьетнам · Хошимин · Дананг · Хуэ · Ханой · Сапа",
+        "country_tag": "vietnam",
+        "tags": ["Вьетнам", "Хошимин", "Дананг", "Ханой", "Сапа", "Индивидуальный"],
+    },
+    "fukuok-khoshimin": {
+        "slug": "fukuok-khoshimin",
+        "location": "Вьетнам · Фукуок · Хошимин",
+        "country_tag": "vietnam",
+        "tags": ["Вьетнам", "Фукуок", "Хошимин", "Пляжный"],
+    },
+    "danang-i-sokrovishcha": {
+        "slug": "danang-i-sokrovishcha",
+        "location": "Вьетнам · Дананг · Хойан · Хуэ",
+        "country_tag": "vietnam",
+        "tags": ["Вьетнам", "Дананг", "Хойан", "Хуэ"],
+    },
+}
+
 
 def text_to_html(text):
     """Параграфы (пустая строка) -> <p>, сплошные списки '- ' -> <ul>."""
@@ -121,7 +154,7 @@ def text_to_html(text):
 
 def map_day_number(raw):
     raw = str(raw).strip()
-    return "последний" if raw == "last" else raw
+    return "последний" if raw in ("last", "last2") else raw
 
 
 def parse_hotel(s):
@@ -175,10 +208,15 @@ def upload_wagtail_image(title, image_bytes, filename):
 
 
 class Command(BaseCommand):
-    help = "Импортирует 13 туров из JSON в каталог."
+    help = "Импортирует туры из JSON (Индонезия/Китай + Вьетнам) в каталог."
 
     def handle(self, *args, **options):
         from tours.models import CatalogPage, TourPage
+
+        datasets = [
+            ("Индонезия/Китай", JSON_DIR, PHOTOS_DIR, TOURS, True),
+            ("Вьетнам", JSON_DIR_VN, PHOTOS_DIR_VN, VIETNAM_TOURS, False),
+        ]
 
         catalog = CatalogPage.objects.first()
         if not catalog:
@@ -186,79 +224,83 @@ class Command(BaseCommand):
             return
 
         created, skipped = [], []
-        for fname in sorted(os.listdir(JSON_DIR)):
-            if not fname.endswith(".json"):
-                continue
-            fpath = os.path.join(JSON_DIR, fname)
-            data = json.load(open(fpath, encoding="utf-8"))
-            key = data.get("key")
-            cfg = TOURS.get(key)
-            if not cfg:
-                self.stderr.write(f"Нет конфигурации для ключа: {key}")
-                continue
-            if TourPage.objects.filter(slug=cfg["slug"]).exists():
-                skipped.append(cfg["slug"])
-                self.stdout.write(f"Уже существует, пропускаю: {cfg['slug']}")
-                continue
+        for label, json_dir, photos_dir, cfg_map, underscore in datasets:
+            self.stdout.write(f"\n=== {label} ===")
+            for fname in sorted(os.listdir(json_dir)):
+                if not fname.endswith(".json"):
+                    continue
+                fpath = os.path.join(json_dir, fname)
+                data = json.load(open(fpath, encoding="utf-8"))
+                key = data.get("key")
+                cfg = cfg_map.get(key)
+                if not cfg:
+                    self.stderr.write(f"Нет конфигурации для ключа: {key}")
+                    continue
+                if TourPage.objects.filter(slug=cfg["slug"]).exists():
+                    skipped.append(cfg["slug"])
+                    self.stdout.write(f"Уже существует, пропускаю: {cfg['slug']}")
+                    continue
 
-            self.stdout.write(f"Создаю: {data['title']}")
+                self.stdout.write(f"Создаю: {data['title']}")
 
-            photo_path = os.path.join(PHOTOS_DIR, f"{key.replace('-', '_')}.jpg")
-            if not os.path.exists(photo_path):
-                self.stderr.write(f"  Нет hero-фото: {photo_path}")
-                continue
+                photo_name = key.replace('-', '_') if underscore else key
+                photo_path = os.path.join(photos_dir, f"{photo_name}.jpg")
+                if not os.path.exists(photo_path):
+                    self.stderr.write(f"  Нет hero-фото: {photo_path}")
+                    continue
 
-            hero = upload_wagtail_image(
-                f"Тур «{data['title']}» — обложка",
-                load_image_file(photo_path),
-                f"{key}.jpg",
-            )
+                hero = upload_wagtail_image(
+                    f"Тур «{data['title']}» — обложка",
+                    load_image_file(photo_path),
+                    f"{key}.jpg",
+                )
 
-            itinerary = []
-            for d in data.get("days", []):
-                itinerary.append(("day", {
-                    "day_number": map_day_number(d.get("day", "")),
-                    "title": d.get("title", ""),
-                    "description": text_to_html(d.get("description", "")),
-                }))
+                itinerary = []
+                for d in data.get("days", []):
+                    itinerary.append(("day", {
+                        "day_number": map_day_number(d.get("day", "")),
+                        "title": d.get("title", ""),
+                        "description": text_to_html(d.get("description", "")),
+                    }))
 
-            accommodation = []
-            for h in data.get("hotels", []):
-                name, htype = parse_hotel(h)
-                accommodation.append(("item", {
-                    "name": name,
-                    "type": htype,
-                    "description": "",
-                    "image": None,
-                }))
+                accommodation = []
+                for h in data.get("hotels", []):
+                    name, htype = parse_hotel(h)
+                    accommodation.append(("item", {
+                        "name": name,
+                        "type": htype,
+                        "description": "",
+                        "image": None,
+                    }))
 
-            tour = TourPage(
-                title=data["title"],
-                slug=cfg["slug"],
-                location=cfg["location"],
-                summary=data.get("summary", ""),
-                description=text_to_html(data.get("summary", "")),
-                highlights=[("item", h) for h in data.get("highlights", [])],
-                duration=data.get("duration", ""),
-                group_size=cfg.get("group_size", DEFAULT_GROUP_SIZE),
-                group_size_max=cfg.get("group_size_max", DEFAULT_GROUP_MAX),
-                comfort=cfg.get("comfort", DEFAULT_COMFORT),
-                difficulty=cfg.get("difficulty", DEFAULT_DIFFICULTY),
-                price_from=data.get("price_short", ""),
-                country_tag=cfg["country_tag"],
-                hero_images=[("image", hero)],
-                itinerary=itinerary,
-                accommodation=accommodation,
-                included=[("item", x) for x in data.get("included", [])],
-                excluded=[("item", x) for x in data.get("excluded", [])],
-            )
+                tour = TourPage(
+                    title=data["title"],
+                    slug=cfg["slug"],
+                    location=cfg["location"],
+                    summary=data.get("summary", ""),
+                    description=text_to_html(data.get("summary", "")),
+                    highlights=[("item", h) for h in data.get("highlights", [])],
+                    duration=data.get("duration", ""),
+                    group_size=cfg.get("group_size", DEFAULT_GROUP_SIZE),
+                    group_size_max=cfg.get("group_size_max", DEFAULT_GROUP_MAX),
+                    comfort=cfg.get("comfort", DEFAULT_COMFORT),
+                    difficulty=cfg.get("difficulty", DEFAULT_DIFFICULTY),
+                    price_from=data.get("price_short", ""),
+                    country_tag=cfg["country_tag"],
+                    hero_images=[("image", hero)],
+                    itinerary=itinerary,
+                    accommodation=accommodation,
+                    included=[("item", x) for x in data.get("included", [])],
+                    excluded=[("item", x) for x in data.get("excluded", [])],
+                )
 
-            catalog.add_child(instance=tour)
-            tour.tags.add(*cfg["tags"])
-            tour.save_revision().publish()
-            created.append(tour.slug)
-            self.stdout.write(self.style.SUCCESS(
-                f"  OK: {tour.slug} — {len(itinerary)} дней, {len(accommodation)} отелей"))
+                catalog.add_child(instance=tour)
+                tour.tags.add(*cfg["tags"])
+                tour.save_revision().publish()
+                created.append(tour.slug)
+                self.stdout.write(self.style.SUCCESS(
+                    f"  OK: {tour.slug} — {len(itinerary)} дней, "
+                    f"{len(accommodation)} отелей"))
 
         self.stdout.write(self.style.SUCCESS(
             f"\nГотово. Создано: {len(created)}; пропущено (существующие): {len(skipped)}"))
