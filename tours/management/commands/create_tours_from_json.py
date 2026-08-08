@@ -30,42 +30,49 @@ TOURS = {
         "location": "Индонезия · Бали",
         "country_tag": "bali",
         "tags": ["Бали", "Индонезия", "Экскурсионный"],
+        "dates": "Любые удобные даты заездов до 31.03.27, исключая периоды 01.07.27-31.08.27 и 20.12.26-15.01.27",
     },
     "bali_komodo": {
         "slug": "bali-komodo",
         "location": "Индонезия · Бали · Комодо",
         "country_tag": "bali",
         "tags": ["Бали", "Индонезия", "Комодо"],
+        "dates": "Любые даты заездов до 20.12.26",
     },
     "bali_java": {
         "slug": "bali-yava-premium",
         "location": "Индонезия · Бали · Ява",
         "country_tag": "bali",
         "tags": ["Бали", "Индонезия", "Ява"],
+        "dates": "Любые удобные даты до 20.12.26",
     },
     "bali-gili": {
         "slug": "sokrovishcha-bali-i-gili",
         "location": "Индонезия · Бали · Гили",
         "country_tag": "bali",
         "tags": ["Бали", "Индонезия", "Гили"],
+        "dates": "Любые даты заездов до 19.12.26",
     },
     "bali-whaleshark": {
         "slug": "bali-i-kitovye-akuly-sumbavy",
         "location": "Индонезия · Бали · Сумбава",
         "country_tag": "bali",
         "tags": ["Бали", "Индонезия", "Сумбава"],
+        "dates": "Любые даты заездов до 27.03.27. Стоимость на заезды в июле и августе — по запросу.",
     },
     "bali-shanghai2": {
         "slug": "shankhay-bali-ubud",
         "location": "Китай · Шанхай · Бали · Убуд",
         "country_tag": "bali",
         "tags": ["Бали", "Китай", "Шанхай"],
+        "dates": "27.12.26 — 04.01.27",
     },
     "indonesia_malaysia": {
         "slug": "malayziya-i-bali",
         "location": "Малайзия · Бали",
         "country_tag": "bali",
         "tags": ["Малайзия", "Бали", "Премиум"],
+        "dates": "до 26.03.27",
     },
     "indonesia_yacht": {
         "slug": "kruiz-sh-minerva",
@@ -73,36 +80,42 @@ TOURS = {
         "country_tag": "bali",
         "tags": ["Индонезия", "Круиз", "Раджа Ампат"],
         "comfort": "Каюта выбранной категории на борту · All Inclusive",
+        "dates": "до 15.04.28",
     },
     "indonesia_shanghai": {
         "slug": "shankhay-bali",
         "location": "Китай · Шанхай · Бали",
         "country_tag": "bali",
         "tags": ["Бали", "Китай", "Шанхай"],
+        "dates": "Тур индивидуальный, заезды возможны в любую дату до 31.03.27. На 1 заезд нужно не менее 2 человек.",
     },
     "papua-bali": {
         "slug": "papua-bali",
         "location": "Индонезия · Папуа · Бали",
         "country_tag": "bali",
         "tags": ["Индонезия", "Папуа", "Бали"],
+        "dates": "Любые удобные даты до 18.12.26",
     },
     "beijing-shanghai": {
         "slug": "pekin-shankhay",
         "location": "Китай · Пекин · Шанхай",
         "country_tag": "china",
         "tags": ["Китай", "Пекин", "Шанхай"],
+        "dates": "24.08.26, 05.09.26, 19.09.26, 12.10.26, 26.10.26, 02.11.26, 23.11.26, 22.02.27, 08.03.27, 05.04.27, 19.04.27, 03.05.27, 24.05.27",
     },
     "shanghai_bali3": {
         "slug": "shankhay-bali-novyy-god",
         "location": "Китай · Шанхай · Бали",
         "country_tag": "bali",
         "tags": ["Бали", "Китай", "Шанхай"],
+        "dates": "27.12.26 — 04.01.27",
     },
     "shanghai_hainan": {
         "slug": "shankhay-haynan-pekin",
         "location": "Китай · Шанхай · Хайнань · Пекин",
         "country_tag": "china",
         "tags": ["Китай", "Шанхай", "Хайнань"],
+        "dates": "до 19.03.27 (пт)",
     },
 }
 
@@ -114,24 +127,28 @@ VIETNAM_TOURS = {
         "country_tag": "vietnam",
         "tags": ["Вьетнам", "Хошимин", "Ханой", "Халонг", "Экскурсионный"],
         "group_size": "групповой · от 1 человека",
+        "dates": "Любые даты заездов до 12.12.26. Цены на заезды 30.04.26-02.05.26, 31.08.26-03.09.26, 24.12.26-07.01.27 — по запросу.",
     },
     "grand-vyetnam": {
         "slug": "grand-vyetnam",
         "location": "Вьетнам · Хошимин · Дананг · Хуэ · Ханой · Сапа",
         "country_tag": "vietnam",
         "tags": ["Вьетнам", "Хошимин", "Дананг", "Ханой", "Сапа", "Индивидуальный"],
+        "dates": "Заезды возможны в удобные даты до 28.11.2026. Нет заездов в периоды: 30.04-02.05, 31.08-03.09.",
     },
     "fukuok-khoshimin": {
         "slug": "fukuok-khoshimin",
         "location": "Вьетнам · Фукуок · Хошимин",
         "country_tag": "vietnam",
         "tags": ["Вьетнам", "Фукуок", "Хошимин", "Пляжный"],
+        "dates": "Любые даты до 27.12.26",
     },
     "danang-i-sokrovishcha": {
         "slug": "danang-i-sokrovishcha",
         "location": "Вьетнам · Дананг · Хойан · Хуэ",
         "country_tag": "vietnam",
         "tags": ["Вьетнам", "Дананг", "Хойан", "Хуэ"],
+        "dates": "Без перелёта — любые удобные даты до 03.12.26; с перелётом — вылеты до 21.10.26 по понедельникам, средам и пятницам.",
     },
 }
 
@@ -236,9 +253,16 @@ class Command(BaseCommand):
                 if not cfg:
                     self.stderr.write(f"Нет конфигурации для ключа: {key}")
                     continue
-                if TourPage.objects.filter(slug=cfg["slug"]).exists():
+                existing = TourPage.objects.filter(slug=cfg["slug"]).first()
+                if existing:
+                    if cfg.get("dates") and existing.dates_info != cfg["dates"]:
+                        existing.dates_info = cfg["dates"]
+                        existing.save_revision().publish()
+                        self.stdout.write(
+                            f"Обновил даты: {cfg['slug']} → {cfg['dates']}")
+                    else:
+                        self.stdout.write(f"Уже существует, пропускаю: {cfg['slug']}")
                     skipped.append(cfg["slug"])
-                    self.stdout.write(f"Уже существует, пропускаю: {cfg['slug']}")
                     continue
 
                 self.stdout.write(f"Создаю: {data['title']}")
@@ -281,6 +305,7 @@ class Command(BaseCommand):
                     description=text_to_html(data.get("summary", "")),
                     highlights=[("item", h) for h in data.get("highlights", [])],
                     duration=data.get("duration", ""),
+                    dates_info=cfg.get("dates", ""),
                     group_size=cfg.get("group_size", DEFAULT_GROUP_SIZE),
                     group_size_max=cfg.get("group_size_max", DEFAULT_GROUP_MAX),
                     comfort=cfg.get("comfort", DEFAULT_COMFORT),

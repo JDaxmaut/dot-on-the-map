@@ -187,6 +187,8 @@ class TourPage(Page, ClusterableModel):
                               verbose_name=_("Особенности тура"))
 
     duration        = models.CharField(_("Длительность"), max_length=40)
+    dates_info      = models.TextField(_("Даты заездов (инфо)"), blank=True,
+                                       help_text="Например: Любые даты до 12.12.26")
     group_size      = models.CharField(_("Размер группы"), max_length=40)
     group_size_max  = models.PositiveSmallIntegerField(_("Макс. мест"), default=8)
     comfort         = models.CharField(_("Проживание"), max_length=60, default="Бутик-виллы")
@@ -276,6 +278,7 @@ class TourPage(Page, ClusterableModel):
         ObjectList([
             MultiFieldPanel([
                 FieldPanel("duration"),
+                FieldPanel("dates_info"),
                 FieldPanel("group_size"),
                 FieldPanel("group_size_max"),
                 FieldPanel("comfort"),
