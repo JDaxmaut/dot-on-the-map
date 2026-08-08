@@ -1,8 +1,8 @@
 """
 python manage.py create_tours_from_json
 
-Импортирует 13 туров из JSON (каталог tours_data) и 4 вьетнамских тура
-(каталог tours_data_vietnam) в каталог туров.
+Импортирует туры из JSON в каталог: 13 туров Индонезия/Китай (tours_data),
+4 вьетнамских (tours_data_vietnam) и 3 малайзийских (tours_data_malaysia).
 Текст — дословно из источников. Фото — по одному hero на тур.
 """
 import os
@@ -17,6 +17,9 @@ PHOTOS_DIR = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tour_photos\final"
 
 JSON_DIR_VN = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tours_data_vietnam"
 PHOTOS_DIR_VN = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tour_photos\final_vietnam"
+
+JSON_DIR_MY = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tours_data_malaysia"
+PHOTOS_DIR_MY = r"C:\Users\dxmta\AppData\Local\Temp\opencode\tour_photos\final_malaysia"
 
 DEFAULT_GROUP_SIZE = "индивидуально · до 6 человек"
 DEFAULT_GROUP_MAX = 6
@@ -132,6 +135,42 @@ TOURS = {
     },
 }
 
+# key из JSON -> настройки малайзийских туров
+MALAYSIA_TOURS = {
+    "malayziya-singapur": {
+        "slug": "malayziya-singapur",
+        "location": "Малайзия · Куала-Лумпур · Сингапур",
+        "country_tag": "malaysia",
+        "categories": ["malaysia"],
+        "tags": ["Малайзия", "Сингапур", "Новый год"],
+        "group_size": "групповой · от 1 человека",
+        "dates": "26.12.26",
+        "tour_dates": [
+            {"start": "2026-12-26", "end": "2027-01-08", "price": 3623,
+             "currency": "USD"},
+        ],
+    },
+    "malayziya-i-bruney": {
+        "slug": "malayziya-i-bruney",
+        "location": "Малайзия · Бруней · Лангкави",
+        "country_tag": "malaysia",
+        "categories": ["malaysia"],
+        "tags": ["Малайзия", "Бруней", "Лангкави"],
+        "group_size": "групповой · от 1 человека",
+        "dates": "до 19.03.27",
+    },
+    "serdtse-borneo": {
+        "slug": "serdtse-borneo",
+        "location": "Малайзия · Кучинг · Борнео · Дамаи",
+        "country_tag": "malaysia",
+        "categories": ["malaysia"],
+        "tags": ["Малайзия", "Борнео", "Кучинг"],
+        "group_size": "групповой · от 1 человека",
+        "dates": "до 30.03.27",
+    },
+}
+
+
 # key из JSON -> настройки вьетнамских туров
 VIETNAM_TOURS = {
     "ves-vyetnam": {
@@ -242,14 +281,15 @@ def upload_wagtail_image(title, image_bytes, filename):
 
 
 class Command(BaseCommand):
-    help = "Импортирует туры из JSON (Индонезия/Китай + Вьетнам) в каталог."
+    help = "Импортирует туры из JSON (Индонезия/Китай + Вьетнам + Малайзия) в каталог."
 
     def handle(self, *args, **options):
-        from tours.models import CatalogPage, TourPage, TourCategory
+        from tours.models import CatalogPage, TourPage, TourCategory, TourDate
 
         datasets = [
             ("Индонезия/Китай", JSON_DIR, PHOTOS_DIR, TOURS, True),
             ("Вьетнам", JSON_DIR_VN, PHOTOS_DIR_VN, VIETNAM_TOURS, False),
+            ("Малайзия", JSON_DIR_MY, PHOTOS_DIR_MY, MALAYSIA_TOURS, True),
         ]
 
         catalog = CatalogPage.objects.first()
@@ -282,6 +322,14 @@ class Command(BaseCommand):
                         existing.categories.set(
                             TourCategory.objects.filter(code__in=want_codes))
                         changed.append("категории")
+                    want_dates = cfg.get("tour_dates") or []
+                    if want_dates and not existing.tour_dates.exists():
+                        for td in want_dates:
+                            TourDate.objects.create(
+                                page=existing,
+                                start_date=td["start"], end_date=td["end"],
+                                price=td["price"], currency=td.get("currency", "RUB"))
+                        changed.append("даты заездов")
                     if changed:
                         existing.save_revision().publish()
                         self.stdout.write(
@@ -351,6 +399,11 @@ class Command(BaseCommand):
                     TourCategory.objects.filter(
                         code__in=cfg.get("categories") or [cfg["country_tag"]]))
                 tour.save_revision().publish()
+                for td in cfg.get("tour_dates") or []:
+                    TourDate.objects.create(
+                        page=tour,
+                        start_date=td["start"], end_date=td["end"],
+                        price=td["price"], currency=td.get("currency", "RUB"))
                 created.append(tour.slug)
                 self.stdout.write(self.style.SUCCESS(
                     f"  OK: {tour.slug} — {len(itinerary)} дней, "
