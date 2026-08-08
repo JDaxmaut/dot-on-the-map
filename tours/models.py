@@ -34,6 +34,21 @@ class TourPageTag(TaggedItemBase):
     )
 
 
+# ─── CATEGORIES (несколько на тур) ───────────────────────────
+class TourCategory(models.Model):
+    code       = models.CharField(_("Код"), max_length=20, unique=True)
+    name       = models.CharField(_("Название"), max_length=40)
+    sort_order = models.PositiveSmallIntegerField(_("Порядок"), default=0)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name        = "Категория тура"
+        verbose_name_plural = "Категории туров"
+
+    def __str__(self):
+        return self.name
+
+
 # ─── CONTACT SUBMISSION ───────────────────────────────────────
 class ContactSubmission(models.Model):
     name       = models.CharField(_("Имя"), max_length=100)
@@ -211,7 +226,30 @@ class TourPage(Page, ClusterableModel):
         m = re.search(r'\d+', self.price_from.replace(',', '').replace(' ', ''))
         return int(m.group()) if m else 0
 
+    @property
+    def country_label(self):
+        return dict(self._meta.get_field("country_tag").choices).get(
+            self.country_tag, self.country_tag)
+
+    @property
+    def category_codes(self):
+        codes = [self.country_tag] + [c.code for c in self.categories.all()]
+        seen, out = set(), []
+        for c in codes:
+            if c and c not in seen:
+                seen.add(c)
+                out.append(c)
+        return " ".join(out)
+
     tags = ClusterTaggableManager(through=TourPageTag, blank=True)
+
+    categories = models.ManyToManyField(
+        "tours.TourCategory",
+        blank=True,
+        related_name="tours",
+        verbose_name=_("Категории (несколько)"),
+        help_text="Например: тур «Бали + Комодо» можно отнести и к Бали, и к Индонезии.",
+    )
 
     hero_images = StreamField([("image", ImageChooserBlock())],
                               use_json_field=True, blank=True,
@@ -269,6 +307,7 @@ class TourPage(Page, ClusterableModel):
                 FieldPanel("location"),
                 FieldPanel("country_tag"),
                 FieldPanel("tags"),
+                FieldPanel("categories"),
             ], heading="Локация и теги"),
             MultiFieldPanel([
                 FieldPanel("summary"),
@@ -405,6 +444,15 @@ class PackageTourPage(Page, ClusterableModel):
         return int(m.group()) if m else 0
 
     @property
+    def country_label(self):
+        return dict(self._meta.get_field("country_tag").choices).get(
+            self.country_tag, self.country_tag)
+
+    @property
+    def category_codes(self):
+        return self.country_tag or ""
+
+    @property
     def hero_first_image(self):
         for block in self.hero_images:
             return block.value
@@ -435,7 +483,9 @@ class CatalogPage(Page):
 
         tag = request.GET.get("filter", "all")
         if tag != "all":
-            tours = tours.filter(country_tag=tag)
+            tours = tours.filter(
+                models.Q(country_tag=tag) |
+                models.Q(categories__code=tag)).distinct()
             packages = packages.filter(country_tag=tag)
 
         q = request.GET.get("q", "").strip()
@@ -455,6 +505,8 @@ class CatalogPage(Page):
 
         # Генерируем фильтры из реальных данных БД — автоматически обновляются
         choices_map = {c[0]: c[1] for c in TourPage._meta.get_field("country_tag").choices}
+        cat_names = {c.code: c.name for c in TourCategory.objects.all()}
+        choices_map.update(cat_names)
         live_tags = (
             TourPage.objects.live().child_of(self)
             .exclude(country_tag="")
@@ -468,6 +520,12 @@ class CatalogPage(Page):
             .values_list("country_tag", flat=True)
             .distinct()
             .order_by("country_tag")
+        )
+        live_tags += list(
+            TourPage.objects.live().child_of(self)
+            .exclude(categories__isnull=True)
+            .values_list("categories__code", flat=True)
+            .distinct()
         )
         seen = set()
         unique_tags = []

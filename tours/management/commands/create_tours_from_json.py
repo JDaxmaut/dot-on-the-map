@@ -29,6 +29,7 @@ TOURS = {
         "slug": "vokrug-bali-za-10-dney",
         "location": "Индонезия · Бали",
         "country_tag": "bali",
+        "categories": ["bali"],
         "tags": ["Бали", "Индонезия", "Экскурсионный"],
         "dates": "Любые удобные даты заездов до 31.03.27, исключая периоды 01.07.27-31.08.27 и 20.12.26-15.01.27",
     },
@@ -36,6 +37,7 @@ TOURS = {
         "slug": "bali-komodo",
         "location": "Индонезия · Бали · Комодо",
         "country_tag": "indonesia",
+        "categories": ["bali", "indonesia"],
         "tags": ["Бали", "Индонезия", "Комодо"],
         "dates": "Любые даты заездов до 20.12.26",
     },
@@ -43,6 +45,7 @@ TOURS = {
         "slug": "bali-yava-premium",
         "location": "Индонезия · Бали · Ява",
         "country_tag": "indonesia",
+        "categories": ["bali", "indonesia"],
         "tags": ["Бали", "Индонезия", "Ява"],
         "dates": "Любые удобные даты до 20.12.26",
     },
@@ -50,6 +53,7 @@ TOURS = {
         "slug": "sokrovishcha-bali-i-gili",
         "location": "Индонезия · Бали · Гили",
         "country_tag": "indonesia",
+        "categories": ["bali", "indonesia"],
         "tags": ["Бали", "Индонезия", "Гили"],
         "dates": "Любые даты заездов до 19.12.26",
     },
@@ -57,6 +61,7 @@ TOURS = {
         "slug": "bali-i-kitovye-akuly-sumbavy",
         "location": "Индонезия · Бали · Сумбава",
         "country_tag": "indonesia",
+        "categories": ["bali", "indonesia"],
         "tags": ["Бали", "Индонезия", "Сумбава"],
         "dates": "Любые даты заездов до 27.03.27. Стоимость на заезды в июле и августе — по запросу.",
     },
@@ -64,6 +69,7 @@ TOURS = {
         "slug": "shankhay-bali-ubud",
         "location": "Китай · Шанхай · Бали · Убуд",
         "country_tag": "bali",
+        "categories": ["bali", "china"],
         "tags": ["Бали", "Китай", "Шанхай"],
         "dates": "27.12.26 — 04.01.27",
     },
@@ -71,6 +77,7 @@ TOURS = {
         "slug": "malayziya-i-bali",
         "location": "Малайзия · Бали",
         "country_tag": "malaysia",
+        "categories": ["malaysia", "bali"],
         "tags": ["Малайзия", "Бали", "Премиум"],
         "dates": "до 26.03.27",
     },
@@ -78,6 +85,7 @@ TOURS = {
         "slug": "kruiz-sh-minerva",
         "location": "Индонезия · Раджа Ампат",
         "country_tag": "indonesia",
+        "categories": ["indonesia"],
         "tags": ["Индонезия", "Круиз", "Раджа Ампат"],
         "comfort": "Каюта выбранной категории на борту · All Inclusive",
         "dates": "до 15.04.28",
@@ -86,6 +94,7 @@ TOURS = {
         "slug": "shankhay-bali",
         "location": "Китай · Шанхай · Бали",
         "country_tag": "bali",
+        "categories": ["bali", "china"],
         "tags": ["Бали", "Китай", "Шанхай"],
         "dates": "Тур индивидуальный, заезды возможны в любую дату до 31.03.27. На 1 заезд нужно не менее 2 человек.",
     },
@@ -93,6 +102,7 @@ TOURS = {
         "slug": "papua-bali",
         "location": "Индонезия · Папуа · Бали",
         "country_tag": "indonesia",
+        "categories": ["indonesia", "bali"],
         "tags": ["Индонезия", "Папуа", "Бали"],
         "dates": "Любые удобные даты до 18.12.26",
     },
@@ -100,6 +110,7 @@ TOURS = {
         "slug": "pekin-shankhay",
         "location": "Китай · Пекин · Шанхай",
         "country_tag": "china",
+        "categories": ["china"],
         "tags": ["Китай", "Пекин", "Шанхай"],
         "dates": "24.08.26, 05.09.26, 19.09.26, 12.10.26, 26.10.26, 02.11.26, 23.11.26, 22.02.27, 08.03.27, 05.04.27, 19.04.27, 03.05.27, 24.05.27",
     },
@@ -107,6 +118,7 @@ TOURS = {
         "slug": "shankhay-bali-novyy-god",
         "location": "Китай · Шанхай · Бали",
         "country_tag": "bali",
+        "categories": ["bali", "china"],
         "tags": ["Бали", "Китай", "Шанхай"],
         "dates": "27.12.26 — 04.01.27",
     },
@@ -114,6 +126,7 @@ TOURS = {
         "slug": "shankhay-haynan-pekin",
         "location": "Китай · Шанхай · Хайнань · Пекин",
         "country_tag": "china",
+        "categories": ["china"],
         "tags": ["Китай", "Шанхай", "Хайнань"],
         "dates": "до 19.03.27 (пт)",
     },
@@ -125,6 +138,7 @@ VIETNAM_TOURS = {
         "slug": "ves-vyetnam",
         "location": "Вьетнам · Хошимин · Дананг · Хойан · Ханой · Халонг",
         "country_tag": "vietnam",
+        "categories": ["vietnam"],
         "tags": ["Вьетнам", "Хошимин", "Ханой", "Халонг", "Экскурсионный"],
         "group_size": "групповой · от 1 человека",
         "dates": "Любые даты заездов до 12.12.26. Цены на заезды 30.04.26-02.05.26, 31.08.26-03.09.26, 24.12.26-07.01.27 — по запросу.",
@@ -133,6 +147,7 @@ VIETNAM_TOURS = {
         "slug": "grand-vyetnam",
         "location": "Вьетнам · Хошимин · Дананг · Хуэ · Ханой · Сапа",
         "country_tag": "vietnam",
+        "categories": ["vietnam"],
         "tags": ["Вьетнам", "Хошимин", "Дананг", "Ханой", "Сапа", "Индивидуальный"],
         "dates": "Заезды возможны в удобные даты до 28.11.2026. Нет заездов в периоды: 30.04-02.05, 31.08-03.09.",
     },
@@ -140,6 +155,7 @@ VIETNAM_TOURS = {
         "slug": "fukuok-khoshimin",
         "location": "Вьетнам · Фукуок · Хошимин",
         "country_tag": "vietnam",
+        "categories": ["vietnam"],
         "tags": ["Вьетнам", "Фукуок", "Хошимин", "Пляжный"],
         "dates": "Любые даты до 27.12.26",
     },
@@ -147,6 +163,7 @@ VIETNAM_TOURS = {
         "slug": "danang-i-sokrovishcha",
         "location": "Вьетнам · Дананг · Хойан · Хуэ",
         "country_tag": "vietnam",
+        "categories": ["vietnam"],
         "tags": ["Вьетнам", "Дананг", "Хойан", "Хуэ"],
         "dates": "Без перелёта — любые удобные даты до 03.12.26; с перелётом — вылеты до 21.10.26 по понедельникам, средам и пятницам.",
     },
@@ -228,7 +245,7 @@ class Command(BaseCommand):
     help = "Импортирует туры из JSON (Индонезия/Китай + Вьетнам) в каталог."
 
     def handle(self, *args, **options):
-        from tours.models import CatalogPage, TourPage
+        from tours.models import CatalogPage, TourPage, TourCategory
 
         datasets = [
             ("Индонезия/Китай", JSON_DIR, PHOTOS_DIR, TOURS, True),
@@ -255,11 +272,20 @@ class Command(BaseCommand):
                     continue
                 existing = TourPage.objects.filter(slug=cfg["slug"]).first()
                 if existing:
+                    changed = []
                     if cfg.get("dates") and existing.dates_info != cfg["dates"]:
                         existing.dates_info = cfg["dates"]
+                        changed.append("даты")
+                    want_codes = cfg.get("categories") or [cfg["country_tag"]]
+                    have_codes = list(existing.categories.values_list("code", flat=True))
+                    if sorted(want_codes) != sorted(have_codes):
+                        existing.categories.set(
+                            TourCategory.objects.filter(code__in=want_codes))
+                        changed.append("категории")
+                    if changed:
                         existing.save_revision().publish()
                         self.stdout.write(
-                            f"Обновил даты: {cfg['slug']} → {cfg['dates']}")
+                            f"Обновил ({', '.join(changed)}): {cfg['slug']}")
                     else:
                         self.stdout.write(f"Уже существует, пропускаю: {cfg['slug']}")
                     skipped.append(cfg["slug"])
@@ -321,6 +347,9 @@ class Command(BaseCommand):
 
                 catalog.add_child(instance=tour)
                 tour.tags.add(*cfg["tags"])
+                tour.categories.set(
+                    TourCategory.objects.filter(
+                        code__in=cfg.get("categories") or [cfg["country_tag"]]))
                 tour.save_revision().publish()
                 created.append(tour.slug)
                 self.stdout.write(self.style.SUCCESS(

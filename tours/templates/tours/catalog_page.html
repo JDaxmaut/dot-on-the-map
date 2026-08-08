@@ -99,7 +99,7 @@
       {% for tour in tours %}
       <a href="{% pageurl tour %}"
          class="group block no-underline text-inherit"
-         data-country="{{ tour.country_tag }}"
+         data-country="{{ tour.category_codes }}"
          data-title="{{ tour.title|lower }}"
          data-price="{{ tour.price_num }}"
          data-idx="{{ forloop.counter0 }}"
@@ -120,7 +120,7 @@
           {% endif %}
           <div class="absolute top-4 right-4 bg-rice/[0.88] backdrop-blur-sm rounded-full
                       px-4 py-1.5 text-[11.5px] tracking-[0.14em] uppercase text-moss">
-            {{ tour.country_tag|capfirst }}
+            {{ tour.country_label }}
           </div>
         </div>
 
@@ -251,7 +251,8 @@ document.addEventListener('alpine:init', () => {
       const q = this.search.trim().toLowerCase();
       const country = el.dataset.country || '';
       const title   = el.dataset.title   || '';
-      return (this.filter === 'all' || country === this.filter) &&
+      const countries = country.split(/\s+/).filter(Boolean);
+      return (this.filter === 'all' || countries.includes(this.filter)) &&
              (!q || title.includes(q) || country.includes(q));
     },
 
