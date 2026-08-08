@@ -94,7 +94,7 @@
 
     {% for section in page.hotel_sections %}
     <div class="mb-[clamp(40px,6vw,64px)]">
-      <div class="mb-[clamp(32px,4.5vw,52px)]">
+      <div class="mb-[10px]">
         <h3 class="m-0 font-serif font-medium text-[clamp(27px,3.6vw,42px)]">{{ section.value.resort }}</h3>
         <span class="mt-2 block text-[15px] sm:text-[16px] font-light tracking-[0.1em] uppercase text-muted">{{ section.value.hotels|length }} {{ section.value.hotels|length|ru_plural:"отель,отеля,отелей" }}</span>
       </div>
