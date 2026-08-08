@@ -375,7 +375,7 @@ class Command(BaseCommand):
                     title=data["title"],
                     slug=cfg["slug"],
                     location=cfg["location"],
-                    summary=data.get("summary", ""),
+                    summary="",
                     description=text_to_html(data.get("summary", "")),
                     highlights=[("item", h) for h in data.get("highlights", [])],
                     duration=data.get("duration", ""),

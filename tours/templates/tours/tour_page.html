@@ -8,7 +8,7 @@
   "@context": "https://schema.org",
   "@type": "TouristTrip",
   "name": "{{ page.title|addslashes }}",
-  "description": "{{ page.summary|addslashes }}",
+  "description": "{{ page.summary|default:page.description|striptags|addslashes }}",
   "url": "{{ request.build_absolute_uri }}",
   "touristType": "Авторские туры",
   "offers": {
@@ -108,12 +108,14 @@
 {# ── ОПИСАНИЕ ────────────────────────────────────────────── #}
 <section class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)]">
   <div class="max-w-[1200px] mx-auto">
+    {% if page.summary %}
     <div class="max-w-[800px] mx-auto mb-[clamp(48px,7vw,84px)] text-center">
       <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">Коротко о туре</div>
       <p class="m-0 font-serif font-medium text-[clamp(22px,3.2vw,38px)] leading-[1.34] text-balance">
         {{ page.summary }}
       </p>
     </div>
+    {% endif %}
     {% if page.description %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-[clamp(28px,5vw,72px)]
                 border-t border-bamboo-line pt-[clamp(36px,5vw,56px)]">

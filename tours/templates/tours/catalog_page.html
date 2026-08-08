@@ -138,9 +138,11 @@
             <span class="w-[3px] h-[3px] rounded-full bg-bamboo flex-shrink-0"></span>
             <span class="text-[13px] font-light text-muted">{{ tour.duration }}</span>
           </div>
+          {% if tour.summary %}
           <p class="m-0 mb-4 text-[14px] leading-[1.65] font-light text-muted max-w-[44ch]">
             {{ tour.summary|truncatechars:120 }}
           </p>
+          {% endif %}
           <span class="text-[12.5px] tracking-[0.18em] uppercase text-terracotta
                        inline-flex items-center gap-2">
             Подробнее

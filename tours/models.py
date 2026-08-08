@@ -195,7 +195,7 @@ class TourPage(Page, ClusterableModel):
 
     location    = models.CharField(_("Локация"), max_length=120,
                                    help_text="Например: Индонезия · Бали")
-    summary     = models.TextField(_("Краткое описание"))
+    summary     = models.TextField(_("Краткое описание"), blank=True)
     description = RichTextField(_("Подробное описание"), blank=True)
     highlights  = StreamField([("item", wt_blocks.CharBlock())],
                               use_json_field=True, blank=True,
@@ -383,7 +383,7 @@ class PackageTourPage(Page, ClusterableModel):
 
     location    = models.CharField(_("Локация"), max_length=120,
                                    help_text="Например: Вьетнам · Дананг · Нячанг · Фукуок")
-    summary     = models.TextField(_("Краткое описание"))
+    summary     = models.TextField(_("Краткое описание"), blank=True)
     description = RichTextField(_("Описание"), blank=True)
 
     duration    = models.CharField(_("Длительность"), max_length=60)
