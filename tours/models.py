@@ -21,7 +21,7 @@ from taggit.models import TaggedItemBase
 from .blocks import (
     DestinationCardBlock, ManifestBlock, QuoteBlock,
     DayBlock, AccommodationBlock, CancelPolicyBlock, FAQBlock,
-    PartnerBlock, CertificateBlock,
+    PartnerBlock, CertificateBlock, HotelSectionBlock,
 )
 
 
@@ -330,6 +330,82 @@ class TourPage(Page, ClusterableModel):
     parent_page_types = ["tours.CatalogPage"]
 
 
+# ─── PACKAGE TOUR PAGE ───────────────────────────────────────
+class PackageTourPage(Page, ClusterableModel):
+    hero_nav = True  # nav starts transparent over dark hero
+    class Meta:
+        verbose_name        = "Пакетный тур"
+        verbose_name_plural = "Пакетные туры"
+
+    location    = models.CharField(_("Локация"), max_length=120,
+                                   help_text="Например: Вьетнам · Дананг · Нячанг · Фукуок")
+    summary     = models.TextField(_("Краткое описание"))
+    description = RichTextField(_("Описание"), blank=True)
+
+    duration    = models.CharField(_("Длительность"), max_length=60)
+    price_from  = models.CharField(_("Цена от"), max_length=40)
+    country_tag = models.CharField(_("Тег страны"), max_length=20,
+                                   choices=[
+                                       ("bali",    "Бали"),
+                                       ("japan",   "Япония"),
+                                       ("vietnam", "Вьетнам"),
+                                       ("china",   "Китай"),
+                                   ],
+                                   default="vietnam")
+
+    hero_images = StreamField([("image", ImageChooserBlock())],
+                              use_json_field=True, blank=True,
+                              verbose_name=_("Галерея (3–5 фото)"))
+
+    hotel_sections = StreamField([("section", HotelSectionBlock())],
+                                 use_json_field=True, blank=True,
+                                 verbose_name=_("Отели по курортам"))
+
+    cta_heading = models.CharField(
+        _("Заголовок финального CTA"), max_length=160,
+        default="Подберём тур, который подойдёт именно вам",
+    )
+    cta_button = models.CharField(
+        _("Текст кнопки CTA"), max_length=60,
+        default="Подобрать тур",
+    )
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            FieldPanel("location"),
+            FieldPanel("country_tag"),
+        ], heading="Локация и теги"),
+        MultiFieldPanel([
+            FieldPanel("summary"),
+            FieldPanel("description"),
+        ], heading="Текст"),
+        MultiFieldPanel([
+            FieldPanel("duration"),
+            FieldPanel("price_from"),
+        ], heading="Характеристики"),
+        FieldPanel("hero_images", help_text="Используйте горизонтальные фото (16:9 или шире)."),
+        FieldPanel("hotel_sections"),
+        MultiFieldPanel([
+            FieldPanel("cta_heading"),
+            FieldPanel("cta_button"),
+        ], heading="Призыв к действию"),
+    ]
+
+    @property
+    def price_num(self):
+        import re
+        m = re.search(r'\d+', self.price_from.replace(',', '').replace(' ', ''))
+        return int(m.group()) if m else 0
+
+    @property
+    def hero_first_image(self):
+        for block in self.hero_images:
+            return block.value
+        return None
+
+    parent_page_types = ["tours.CatalogPage"]
+
+
 # ─── CATALOG PAGE ─────────────────────────────────────────────
 class CatalogPage(Page):
     class Meta:
@@ -341,26 +417,32 @@ class CatalogPage(Page):
         FieldPanel("intro"),
     ]
 
-    subpage_types   = ["tours.TourPage"]
+    subpage_types   = ["tours.TourPage", "tours.PackageTourPage"]
     parent_page_types = ["tours.HomePage"]
 
     def get_context(self, request):
         context = super().get_context(request)
-        tours = TourPage.objects.live().child_of(self).order_by("title")
+
+        tours = TourPage.objects.live().child_of(self)
+        packages = PackageTourPage.objects.live().child_of(self)
 
         tag = request.GET.get("filter", "all")
         if tag != "all":
             tours = tours.filter(country_tag=tag)
+            packages = packages.filter(country_tag=tag)
 
         q = request.GET.get("q", "").strip()
         if q:
             tours = tours.filter(title__icontains=q)
+            packages = packages.filter(title__icontains=q)
+
+        tours = sorted(list(tours) + list(packages), key=lambda t: t.title)
 
         sort = request.GET.get("sort", "default")
         if sort == "price_asc":
-            tours = sorted(tours, key=lambda t: int(t.price_from.replace("$", "").replace(" ", "").replace(",", "") or 0))
+            tours = sorted(tours, key=lambda t: t.price_num)
         elif sort == "price_desc":
-            tours = sorted(tours, key=lambda t: int(t.price_from.replace("$", "").replace(" ", "").replace(",", "") or 0), reverse=True)
+            tours = sorted(tours, key=lambda t: t.price_num, reverse=True)
 
         context["tours"] = tours
 
@@ -373,9 +455,23 @@ class CatalogPage(Page):
             .distinct()
             .order_by("country_tag")
         )
+        live_tags = list(live_tags) + list(
+            PackageTourPage.objects.live().child_of(self)
+            .exclude(country_tag="")
+            .values_list("country_tag", flat=True)
+            .distinct()
+            .order_by("country_tag")
+        )
+        seen = set()
+        unique_tags = []
+        for t in live_tags:
+            if t not in seen:
+                seen.add(t)
+                unique_tags.append(t)
+
         context["filter_tags"] = [{"id": "all", "label": "Все"}] + [
             {"id": tag, "label": choices_map.get(tag, tag.capitalize())}
-            for tag in live_tags
+            for tag in unique_tags
         ]
         context["sort_options"] = [
             {"id": "default",    "label": "Подборка"},

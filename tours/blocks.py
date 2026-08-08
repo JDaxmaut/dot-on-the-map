@@ -81,6 +81,16 @@ class AccommodationBlock(blocks.StructBlock):
         template = "blocks/accommodation.html"
 
 
+class HotelSectionBlock(blocks.StructBlock):
+    resort = blocks.CharBlock(label="Курорт")
+    hotels = blocks.ListBlock(AccommodationBlock(), label="Отели")
+
+    class Meta:
+        icon     = "list-ul"
+        label    = "Курорт с отелями"
+        template = "blocks/hotel_section.html"
+
+
 class CancelPolicyBlock(blocks.StructBlock):
     period         = blocks.CharBlock(label="Период", help_text="Например: За 30+ дней")
     description    = blocks.CharBlock(label="Описание")

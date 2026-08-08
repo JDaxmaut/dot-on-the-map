@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div x-data="packageTour()">
+
+{# ── HERO GALLERY ────────────────────────────────────────── #}
+<section class="relative h-screen min-h-[600px] overflow-hidden bg-moss">
+
+  {% for item in page.hero_images %}
+    {% with item.value as img %}
+      {% image img fill-1920x1080 format-webp as slide %}
+      <img src="{{ slide.url }}" alt="{{ page.title }}"
+           loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1100ms] {% if not forloop.first %}opacity-0{% endif %}"
+           :class="active === {{ forloop.counter0 }} ? 'opacity-100' : 'opacity-0'">
+    {% endwith %}
+  {% empty %}
+    <div class="absolute inset-0 bg-gradient-to-br from-moss/80 to-moss/40 flex items-center justify-center">
+      <span class="font-serif text-[32px] text-rice/50">{{ page.location }}</span>
+    </div>
+  {% endfor %}
+
+  <div class="absolute inset-0 pointer-events-none"
+       style="background:linear-gradient(to bottom,rgba(44,62,45,0.72) 0%,rgba(44,62,45,0.18) 28%,rgba(44,62,45,0) 48%),linear-gradient(to top,rgba(44,62,45,0.75) 0%,rgba(44,62,45,0.18) 44%,rgba(44,62,45,0) 70%)">
+  </div>
+
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-[0.055]"
+       style="mix-blend-mode:overlay;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.8%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-size:180px 180px">
+  </div>
+
+  <div class="absolute bottom-[clamp(96px,15vh,150px)] left-[clamp(20px,5vw,72px)]
+              right-[clamp(20px,5vw,72px)] text-rice">
+    <div class="flex items-center gap-2.5 text-[12px] tracking-[0.24em] uppercase mb-4 opacity-90">
+      <span class="w-5 h-px bg-terracotta inline-block"></span>
+      {{ page.location }}
+    </div>
+    <h1 class="m-0 mb-4 font-serif font-medium text-[clamp(36px,6.6vw,84px)] leading-[1.02]">
+      {{ page.title }}
+    </h1>
+    <span class="inline-flex px-4 py-1.5 border border-rice/50 rounded-full
+                 text-[11.5px] tracking-[0.12em] uppercase">Пакетный тур</span>
+  </div>
+
+  {% if page.hero_images %}
+  <div class="absolute bottom-7 left-0 right-0 px-4 flex justify-center">
+    <div class="flex gap-2 overflow-x-auto max-w-full"
+         style="scrollbar-width:none;-ms-overflow-style:none">
+      <style>.thumb-strip::-webkit-scrollbar{display:none}</style>
+      {% for item in page.hero_images %}
+        {% with item.value as img %}
+          {% image img fill-200x140 format-webp as thumb %}
+          <button @click="setSlide({{ forloop.counter0 }})"
+                  class="flex-shrink-0 w-14 h-10 sm:w-[clamp(54px,7.5vw,84px)] sm:h-[clamp(38px,5vw,54px)]
+                         border-0 p-0 rounded-[6px] overflow-hidden bg-moss cursor-pointer transition-all duration-300"
+                  :class="active === {{ forloop.counter0 }}
+                    ? 'opacity-100 ring-2 ring-terracotta' : 'opacity-50 hover:opacity-85'">
+            <img src="{{ thumb.url }}" alt="" class="w-full h-full object-cover">
+          </button>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+{# ── DETAILS BAR ─────────────────────────────────────────── #}
+<div class="grid grid-cols-1 md:grid-cols-3 bg-bamboo">
+  {% include "tours/includes/detail_item.html" with icon="pin"   value=page.location   label="Курорты" %}
+  {% include "tours/includes/detail_item.html" with icon="clock" value=page.duration   label="Длительность" %}
+  {% include "tours/includes/detail_item.html" with icon="tag"   value=page.price_from label="Цена за человека" %}
+</div>
+
+{# ── О ТУРЕ ──────────────────────────────────────────────── #}
+{% if page.description %}
+<section class="py-[clamp(64px,10vh,120px)] px-[clamp(20px,6vw,96px)]">
+  <div class="max-w-[800px] mx-auto">
+    <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-5">О туре</div>
+    <div class="pkg-prose">
+      {{ page.description|richtext }}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ── ОТЕЛИ ПО КУРОРТАМ ───────────────────────────────────── #}
+{% if page.hotel_sections %}
+<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="mb-[clamp(30px,4vw,48px)]">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Проживание</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(26px,3.6vw,46px)]">Отели по курортам</h2>
+    </div>
+
+    {% for section in page.hotel_sections %}
+    <div class="mb-[clamp(40px,6vw,64px)]">
+      <div class="flex items-baseline gap-3 mb-[clamp(20px,3vw,30px)]">
+        <h3 class="m-0 font-serif font-medium text-[clamp(22px,3vw,34px)]">{{ section.value.resort }}</h3>
+        <span class="text-[11.5px] tracking-[0.16em] uppercase text-muted-2">{{ section.value.hotels|length }} отеля</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[clamp(16px,2.2vw,28px)]">
+        {% for hotel in section.value.hotels %}
+        <div>
+          {% if hotel.image %}
+          {% image hotel.image fill-600x450 format-webp as hi %}
+          <div class="rounded-2xl overflow-hidden shadow-zen mb-4 aspect-[4/3]">
+            <img src="{{ hi.url }}" alt="{{ hotel.name }}" class="w-full h-full object-cover">
+          </div>
+          {% endif %}
+          <div class="font-serif text-[20px] mb-1">{{ hotel.name }}</div>
+          <div class="text-[12px] tracking-[0.12em] uppercase text-terracotta mb-2">{{ hotel.type }}</div>
+          <p class="m-0 text-[13.5px] leading-[1.65] font-light text-muted">{{ hotel.description }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <p class="mt-[clamp(20px,2.5vw,32px)] mb-0 text-[12.5px] leading-[1.6] font-light text-muted-2">
+      * Отели могут быть заменены на равноценные.
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{# ── ФИНАЛЬНЫЙ CTA ───────────────────────────────────────── #}
+<section class="py-[clamp(80px,14vh,160px)] px-[clamp(20px,6vw,96px)]
+                text-center border-t border-bamboo-line">
+  <div class="max-w-[720px] mx-auto">
+    <h2 class="m-0 font-serif font-medium text-[clamp(30px,4.8vw,60px)] leading-[1.12] text-balance">
+      {{ page.cta_heading }}
+    </h2>
+    <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
+      <a href="{% slugurl 'contact' %}?tour={{ page.title|urlencode }}"
+         class="inline-flex items-center gap-3 px-9 py-[18px] bg-terracotta text-rice
+                no-underline rounded-full text-[13px] tracking-[0.18em] uppercase
+                hover:bg-terracotta-dark transition-colors duration-300">
+        {{ page.cta_button }}
+      </a>
+      <a href="https://t.me/tochka_nakarte" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-3 px-9 py-[18px] border border-bamboo
+                text-moss no-underline rounded-full text-[13px] tracking-[0.18em] uppercase
+                hover:border-terracotta hover:text-terracotta transition-colors duration-300">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+        Telegram
+      </a>
+      <a href="https://wa.me/79615215290" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-3 px-9 py-[18px] border border-bamboo
+                text-moss no-underline rounded-full text-[13px] tracking-[0.18em] uppercase
+                hover:border-[#25D366] hover:text-[#25D366] transition-colors duration-300">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+</div>{# end x-data="packageTour()" #}
+{% endblock %}
+
+{% block extra_js %}
+<style>
+  .pkg-prose > p {
+    font-size: clamp(15px, 1.4vw, 17px);
+    line-height: 1.8;
+    font-weight: 300;
+    color: #3a4a3b;
+  }
+  .pkg-prose > p:first-of-type {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(21px, 2.8vw, 32px);
+    line-height: 1.4;
+    color: #2C3E2D;
+  }
+  .pkg-prose h3 {
+    margin: 40px 0 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 500;
+    color: #2C3E2D;
+  }
+  .pkg-prose ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .pkg-prose ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #EDE8DF;
+    font-size: clamp(14.5px, 1.3vw, 16px);
+    line-height: 1.65;
+    font-weight: 300;
+    color: #3a4a3b;
+  }
+  .pkg-prose ul li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #C86B49;
+    flex-shrink: 0;
+    margin-top: 9px;
+  }
+</style>
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('packageTour', () => ({
+    active: 0,
+    autoTimer: null,
+    init() {
+      const total = {{ page.hero_images|length }};
+      if (total > 1) {
+        this.autoTimer = setInterval(() => {
+          this.active = (this.active + 1) % total;
+        }, 6000);
+      }
+    },
+    setSlide(i) {
+      this.active = i;
+      clearInterval(this.autoTimer);
+      const total = {{ page.hero_images|length }};
+      this.autoTimer = setInterval(() => {
+        this.active = (this.active + 1) % total;
+      }, 6000);
+    },
+  }));
+});
+</script>
+{% endblock %}

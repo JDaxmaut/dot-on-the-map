@@ -1,0 +1,15 @@
+{% load wagtailimages_tags %}
+<section>
+  <h2>{{ value.resort }}</h2>
+  {% for hotel in value.hotels %}
+    {% if hotel.image %}
+      {% image hotel.image fill-600x450 format-webp as ai %}
+      <div class="rounded-2xl overflow-hidden shadow-zen mb-4 aspect-[4/3]">
+        <img src="{{ ai.url }}" alt="{{ hotel.name }}" class="w-full h-full object-cover">
+      </div>
+    {% endif %}
+    <div class="font-serif text-[20px] mb-1">{{ hotel.name }}</div>
+    <div class="text-[12px] tracking-[0.12em] uppercase text-terracotta mb-2">{{ hotel.type }}</div>
+    <p class="m-0 text-[13.5px] leading-[1.65] font-light text-muted">{{ hotel.description }}</p>
+  {% endfor %}
+</section>
