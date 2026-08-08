@@ -196,10 +196,12 @@ class TourPage(Page, ClusterableModel):
     price_from      = models.CharField(_("Цена от"), max_length=40)
     country_tag     = models.CharField(_("Тег страны"), max_length=20,
                                        choices=[
-                                           ("bali",    "Бали"),
-                                           ("japan",   "Япония"),
-                                           ("vietnam", "Вьетнам"),
-                                           ("china",   "Китай"),
+                                           ("bali",      "Бали"),
+                                           ("indonesia", "Индонезия"),
+                                           ("malaysia",  "Малайзия"),
+                                           ("japan",     "Япония"),
+                                           ("vietnam",   "Вьетнам"),
+                                           ("china",     "Китай"),
                                        ],
                                        default="bali")
 
@@ -349,10 +351,12 @@ class PackageTourPage(Page, ClusterableModel):
     price_from  = models.CharField(_("Цена от"), max_length=40)
     country_tag = models.CharField(_("Тег страны"), max_length=20,
                                    choices=[
-                                       ("bali",    "Бали"),
-                                       ("japan",   "Япония"),
-                                       ("vietnam", "Вьетнам"),
-                                       ("china",   "Китай"),
+                                       ("bali",      "Бали"),
+                                       ("indonesia", "Индонезия"),
+                                       ("malaysia",  "Малайзия"),
+                                       ("japan",     "Япония"),
+                                       ("vietnam",   "Вьетнам"),
+                                       ("china",     "Китай"),
                                    ],
                                    default="vietnam")
 
