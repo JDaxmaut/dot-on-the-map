@@ -367,6 +367,28 @@
 </section>
 {% endif %}
 
+{# ── ОПЛАТА И ОТМЕНА ──────────────────────────────────────── #}
+{% if page.cancel_policy %}
+<section class="py-[clamp(56px,9vh,100px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line">
+  <div class="max-w-[1100px] mx-auto">
+    <div class="mb-[clamp(30px,4vw,48px)]">
+      <div class="text-[12px] tracking-[0.28em] uppercase text-terracotta mb-3.5">Оплата</div>
+      <h2 class="m-0 font-serif font-medium text-[clamp(26px,3.6vw,46px)]">Условия оплаты и отмены</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-[clamp(16px,2.2vw,28px)]">
+      {% for item in page.cancel_policy %}
+        {% with item.value as cp %}
+        <div class="bg-[#EFEAE0] rounded-2xl p-[clamp(18px,2.5vw,26px)]">
+          <div class="font-serif text-[clamp(18px,2vw,24px)] text-moss mb-2.5">{{ cp.period }}</div>
+          <p class="m-0 text-[14px] leading-[1.65] font-light text-[#3a4a3b]">{{ cp.description }}</p>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {# ── ГАЛЕРЕЯ-МОЗАИКА ──────────────────────────────────────── #}
 {% if page.gallery_images.all %}
 <section class="py-[clamp(32px,5vh,56px)] px-[clamp(20px,6vw,96px)] border-t border-bamboo-line">
