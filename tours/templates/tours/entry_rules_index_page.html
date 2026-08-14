@@ -34,7 +34,7 @@
                         flex flex-col items-center h-full">
               {% if country.flag_image %}
               {% image country.flag_image width-96 format-webp as flag_img %}
-              <div class="w-[68px] h-[51px] rounded-md overflow-hidden shadow-zen ring-1 ring-bamboo-line mb-5 bg-white">
+              <div class="w-[72px] h-12 rounded-md overflow-hidden shadow-zen ring-1 ring-bamboo-line mb-5 bg-white">
                 <img src="{{ flag_img.url }}" alt="{{ country.country_name }}" class="w-full h-full object-cover">
               </div>
               {% endif %}
