@@ -28,10 +28,17 @@
           <a href="{{ country.url }}"
              class="group block no-underline text-inherit"
              aria-label="{{ country.country_name }} — правила въезда">
-<div class="border border-bamboo-line rounded-2xl p-[clamp(20px,2.5vw,28px)] bg-[#EFEAE0]
-                         hover:border-terracotta hover:-translate-y-1 transition-all duration-400 shadow-zen
-                         flex flex-col h-full">
-               <h2 class="m-0 font-serif font-medium text-[clamp(18px,2.2vw,22px)] leading-[1.15] text-moss text-center">
+            <div class="border border-bamboo-line rounded-2xl p-[clamp(20px,2.5vw,28px)] bg-[#EFEAE0]
+                        hover:border-terracotta hover:-translate-y-1 hover:shadow-zen-lg
+                        transition-all duration-300 shadow-zen
+                        flex flex-col items-center h-full">
+              {% if country.flag_image %}
+              {% image country.flag_image width-96 format-webp as flag_img %}
+              <div class="w-[68px] h-[51px] rounded-md overflow-hidden shadow-zen ring-1 ring-bamboo-line mb-5 bg-white">
+                <img src="{{ flag_img.url }}" alt="{{ country.country_name }}" class="w-full h-full object-cover">
+              </div>
+              {% endif %}
+              <h2 class="m-0 font-serif font-medium text-[clamp(18px,2.2vw,22px)] leading-[1.15] text-moss text-center">
                 {{ country.country_name }}
               </h2>
               <div class="flex flex-wrap justify-center gap-1.5 mt-3 mb-3">

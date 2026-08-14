@@ -14,8 +14,8 @@
       <div class="flex items-start gap-6">
         {% if page.flag_image %}
           {% image page.flag_image width-96 format-webp as flag_img %}
-          <div class="w-16 h-12 flex-shrink-0 mt-1.5 flex items-center justify-center">
-            <img src="{{ flag_img.url }}" alt="{{ page.country_name }}" class="max-w-full max-h-full object-contain">
+          <div class="w-[68px] h-[51px] rounded-lg overflow-hidden shadow-zen ring-1 ring-bamboo-line bg-white flex-shrink-0 mt-1.5">
+            <img src="{{ flag_img.url }}" alt="{{ page.country_name }}" class="w-full h-full object-cover">
           </div>
         {% endif %}
         <div>
