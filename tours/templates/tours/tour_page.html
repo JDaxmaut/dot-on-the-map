@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags humanize %}
+{% load wagtailcore_tags wagtailimages_tags humanize ruplural %}
 
 {% block extra_head %}
 {% autoescape off %}
@@ -173,9 +173,26 @@
     </div>
     {% endif %}
 
+    {% if page.tour_dates.all %}
+    <div x-show="months.length > 1"
+         class="flex flex-wrap items-center gap-2.5 mb-[clamp(24px,3vw,32px)]">
+      <template x-for="(m, i) in months" :key="m">
+        <button @click="setMonth(i)" type="button"
+                class="px-4 py-2 rounded-full border text-[13px] tracking-[0.04em]
+                       transition-colors duration-300 cursor-pointer"
+                :class="monthIdx === i
+                  ? 'border-terracotta bg-terracotta text-rice'
+                  : 'border-bamboo-line bg-rice text-moss hover:border-terracotta'">
+          <span x-text="monthLabels[i]"></span>
+        </button>
+      </template>
+    </div>
+    {% endif %}
+
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[clamp(14px,2vw,22px)] mb-[clamp(32px,5vw,52px)]">
       {% for date in page.tour_dates.all %}
-      <div @click="selectDate({{ forloop.counter0 }})"
+      <div x-show="'{{ date.start_date|month_key }}' === months[monthIdx]"
+           @click="selectDate({{ forloop.counter0 }})"
            class="border rounded-2xl p-[18px_20px] cursor-pointer transition-all duration-300"
            :class="dateIdx === {{ forloop.counter0 }}
              ? 'border-terracotta bg-[#FBF5F0]'
@@ -483,9 +500,13 @@
 {% block extra_js %}
 <script>
 document.addEventListener('alpine:init', () => {
+  const monthNames = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
   const dates = [
     {% for d in page.tour_dates.all %}
     {
+      month: '{{ d.start_date|month_key }}',
       label: '{{ d.start_date|date:"j M" }} — {{ d.end_date|date:"j M" }}',
       price: '{{ d.price|intcomma }} {{ d.currency_symbol }}',
       spots: {{ d.spots_left }},
@@ -496,6 +517,7 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('tourPage', () => ({
     active: 0,
     dateIdx: 0,
+    monthIdx: 0,
     autoTimer: null,
     init() {
       const total = {{ page.hero_images|length }};
@@ -514,6 +536,26 @@ document.addEventListener('alpine:init', () => {
       }, 6000);
     },
     selectDate(i) { this.dateIdx = i; },
+    get months() {
+      const seen = [];
+      for (const d of dates) {
+        if (!seen.includes(d.month)) seen.push(d.month);
+      }
+      return seen;
+    },
+    get monthLabels() {
+      return this.months.map(m => {
+        const [y, mm] = m.split('-');
+        return monthNames[parseInt(mm, 10)] + ' ' + y;
+      });
+    },
+    setMonth(i) {
+      this.monthIdx = i;
+      const month = this.months[i];
+      if (month && dates[this.dateIdx]?.month !== month) {
+        this.dateIdx = dates.findIndex(d => d.month === month);
+      }
+    },
     get selectedLabel() { return dates[this.dateIdx]?.label || '—'; },
     get selectedPrice() { return dates[this.dateIdx]?.price || '—'; },
     get selectedSpots() { return dates[this.dateIdx]?.spots ?? 0; },

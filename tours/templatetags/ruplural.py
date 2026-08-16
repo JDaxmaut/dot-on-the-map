@@ -24,3 +24,12 @@ def ru_plural(value, forms):
     if 2 <= n10 <= 4 and not (12 <= n100 <= 14):
         return forms[1]
     return forms[2] if len(forms) > 2 else forms[1]
+
+
+@register.filter
+def month_key(value):
+    """Ключ месяца для группировки дат заездов: YYYY-MM"""
+    try:
+        return value.strftime("%Y-%m")
+    except AttributeError:
+        return ""
