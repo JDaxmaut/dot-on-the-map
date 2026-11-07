@@ -2,7 +2,6 @@ from django.conf import settings
 
 ADMIN_PREFIXES = ("/tochka-cms/", "/django-admin/", "/documents/")
 
-
 def _csp_header():
     extra_script = ""
     if getattr(settings, "CSP_EXTRA_SCRIPT_SRC", None):
@@ -13,8 +12,9 @@ def _csp_header():
         f" https://cdn.jsdelivr.net https://mc.yandex.ru{extra_script}",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
-        "img-src 'self' data: https://mc.yandex.ru",
-        "connect-src 'self' https://mc.yandex.ru https://mc.yandex.com",
+        "img-src 'self' data: https://mc.yandex.ru https://static.cherehapa.ru",
+        "connect-src 'self' https://mc.yandex.ru https://mc.yandex.com"
+        " https://cherehapa.ru https://www.cherehapa.ru https://static.cherehapa.ru",
         "media-src 'self'",
         "object-src 'none'",
         "frame-src 'none'",
@@ -23,8 +23,7 @@ def _csp_header():
         "form-action 'self'",
         "upgrade-insecure-requests",
     ])
-
-
+    
 class SecurityHeadersMiddleware:
     """Добавляет CSP и Permissions-Policy на публичные HTML-страницы.
 

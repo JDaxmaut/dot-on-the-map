@@ -280,11 +280,11 @@
             this.scrolled = !e.isIntersecting;
           });
           obs.observe(sentinel);
-          this.$cleanup(() => { obs.disconnect(); sentinel.remove(); });
         },
       }));
     });
   </script>
+
   {% if YANDEX_METRIKA_ID %}
   <script>
   (function () {
@@ -303,6 +303,7 @@
       webvisor: false
     });
   })();
+  
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/{{ YANDEX_METRIKA_ID }}"
     style="position:absolute;left:-9999px" alt=""/></div></noscript>

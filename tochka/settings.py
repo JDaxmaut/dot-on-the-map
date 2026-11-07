@@ -118,6 +118,14 @@ AUTH_PASSWORD_VALIDATORS = [
 YANDEX_METRIKA_ID = config("YANDEX_METRIKA_ID", default="")
 TELEGRAM_URL = config("TELEGRAM_URL", default="https://t.me/tochka_nakarte")
 
+CSP_EXTRA_SCRIPT_SRC = ["https://static.cherehapa.ru"]
+CSP_EXTRA_CONNECT_SRC = [
+    "https://cherehapa.ru",
+    "https://api.cherehapa.ru",   # у них расчёт идёт сюда
+    "https://static.cherehapa.ru",
+]
+CSP_EXTRA_IMG_SRC = ["https://static.cherehapa.ru"]   # если вдруг логотип/флаги
+
 LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
